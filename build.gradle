@@ -1,0 +1,47 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.6
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+project.group='com.sample'
+project.version = '1.0'
+
+// source download
+eclipse {
+	classpath {
+	       downloadSources=true
+	       downloadJavadoc=true
+	}
+}
+
+repositories {
+	maven { url 'http://mac.sejong.asia:9090/content/groups/public/' }
+	maven { url 'https://swt-repo.googlecode.com/svn/repo/' }
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	compile('commons-codec:commons-codec:1.10')
+	compile('commons-lang:commons-lang:2.6')
+	compile('org.eclipse.draw2d:org.eclipse.draw2d:3.7.2')
+	compile('org.eclipse.gef:org.eclipse.gef:3.7.2')
+	compile('org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:3.8')
+	compile('org.eclipse.jface:org.eclipse.jface:3.8.0.v20120521-2329')
+	compile('com.ibm.icu:icu4j:55.1')
+	//compile('org.eclipse.ui:org.eclipse.ui.workbench:3.7.1.v20120104-1859')
+}
+
+sourceCompatibility = 1.6
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+task initProject(description: 'initialize project') << {
+    createDir = {
+        println "create source directory: $it"
+        it.mkdirs()
+    }
+    sourceSets*.java.srcDirs*.each createDir
+    sourceSets*.resources.srcDirs*.each createDir
+}
