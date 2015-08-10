@@ -1,6 +1,7 @@
 package com.sample.calltree.model;
 
-public class CTElement {
+
+public abstract class CTElement {
 	
 	private String name;
 
@@ -15,5 +16,4 @@ public class CTElement {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 }

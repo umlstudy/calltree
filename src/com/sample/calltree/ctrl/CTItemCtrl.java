@@ -1,0 +1,40 @@
+package com.sample.calltree.ctrl;
+
+
+import java.util.List;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.draw2d.geometry.Rectangle;
+
+import com.sample.calltree.figure.CTElementFigure;
+import com.sample.calltree.figure.CTItemFigure;
+import com.sample.calltree.model.CTElement;
+import com.sample.calltree.model.CTItem;
+
+public class CTItemCtrl extends FigureEventHandler {
+
+	private CTItemCtrl(CTItem ctItem) {
+		super(ctItem);
+	}
+	
+	public static CTItemCtrl newInstance(CTItem ctItem) {
+		return new CTItemCtrl(ctItem);
+	}
+
+	@Override
+	protected CTElementFigure createFigure() {
+		return new CTItemFigure();
+	}
+
+	@Override
+	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
+		Assert.isLegal(element instanceof CTItem, "element instanceof CTItem");
+		CTItem item = (CTItem)element;
+		figure.setBounds(new Rectangle(item.getLocation(), item.getDimension()));
+	}
+	
+	@Override
+	protected List<CTItem> getElementChildren() {
+		return ((CTItem)getElement()).getChildren();
+	}
+}

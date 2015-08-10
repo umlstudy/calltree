@@ -1,25 +1,37 @@
 package com.sample.calltree.model;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 
 public class CTItem extends CTContainer implements CTLocationElement {
 
-	private Point point;
+	private Point location;
+	private Dimension dimension;
 	
 	public CTItem(String name) {
 		super(name);
 	}
 
 	@Override
-	public void setLocation(Point point) {
-		this.point = point;
-		
+	public void setLocation(Point location) {
+		Assert.isNotNull(location);
+		this.location = location;
 	}
 
 	@Override
 	public Point getLocation() {
-		//return point;
-		// TODO
-		return new Point(10,10);
+		Assert.isNotNull(location);
+		return location;
+	}
+
+	public Dimension getDimension() {
+		Assert.isNotNull(dimension);
+		return dimension;
+	}
+
+	public void setDimension(Dimension size) {
+		Assert.isNotNull(size);
+		this.dimension = size;
 	}
 }
