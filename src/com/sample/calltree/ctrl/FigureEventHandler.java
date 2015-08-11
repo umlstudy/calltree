@@ -10,6 +10,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import com.sample.calltree.model.CTElement;
+import com.sample.calltree.model.CTItem;
 
 public abstract class FigureEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
 
@@ -55,6 +56,8 @@ public abstract class FigureEventHandler extends CTContainerCtrl implements Mous
 		getFigure().translate(offset.width, offset.height);
 		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
 		event.consume();
+		
+		((CTItem)getElement()).setBounds(bounds);
 	}
 
 	public void mouseReleased(MouseEvent event) {

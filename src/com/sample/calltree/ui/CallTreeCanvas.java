@@ -23,30 +23,12 @@ public class CallTreeCanvas extends FigureCanvas {
 	private CtrlFactory ctrlFactory;
 	private CTRootCtrl rootCtrl;
 	
-	private GridLayer gridLayer;
-	private FreeformLayer primary;
-	private ConnectionLayer connections;
-	
 	private ScalableFreeformLayeredPane layoutPane;
 	
 	public CallTreeCanvas(Composite parent) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		
 		layoutPane = new ScalableFreeformLayeredPane();
-		
-		gridLayer = new GridLayer();
-		gridLayer.setBorder(new MarginBorder(3));
-		gridLayer.setLayoutManager(new FreeformLayout());
-		layoutPane.add(gridLayer, "gridLayer");
-		
-		primary = new FreeformLayer();
-		primary.setBorder(new MarginBorder(3));
-		primary.setLayoutManager(new FreeformLayout());
-		layoutPane.add(primary, "Primary");
-
-		connections = new ConnectionLayer();
-		connections.setConnectionRouter(new ShortestPathConnectionRouter(primary));
-		layoutPane.add(connections, "Connections");
 		
 		FreeformViewport freeformViewport = new FreeformViewport();
 		freeformViewport.setContents(layoutPane);
@@ -55,9 +37,21 @@ public class CallTreeCanvas extends FigureCanvas {
 	
 	public final void setContents(CTRoot ctRoot) {
 		Assert.isLegal(getCtrlFactory()!=null, "getCtrlFactory()!=null");
-		rootCtrl = (CTRootCtrl)getCtrlFactory().createCtrl(ctRoot);
+		rootCtrl = (CTRootCtrl)getCtrlFactory().createCtrl(null, ctRoot);
 		rootCtrl.setCallTreeCanvas(this);
-		super.setContents(rootCtrl.getFigure());
+		
+		GridLayer gridLayer = new GridLayer();
+		gridLayer.setBorder(new MarginBorder(3));
+		gridLayer.setLayoutManager(new FreeformLayout());
+		layoutPane.add(gridLayer, "gridLayer");
+		
+		IFigure primary = rootCtrl.getFigure();
+		layoutPane.add(primary, "Primary");
+
+		ConnectionLayer connections = new ConnectionLayer();
+		connections.setConnectionRouter(new ShortestPathConnectionRouter(primary));
+		layoutPane.add(connections, "Connections");
+		
 		rootCtrl.refresh();
 	}
 	

@@ -3,8 +3,9 @@ package com.sample.calltree.model;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 
-public class CTItem extends CTContainer implements CTLocationElement {
+public class CTItem extends CTContainer implements CTLocationElement, CTConnectionEndPoint {
 
 	private Point location;
 	private Dimension dimension;
@@ -32,5 +33,10 @@ public class CTItem extends CTContainer implements CTLocationElement {
 	public void setDimension(Dimension size) {
 		Assert.isNotNull(size);
 		this.dimension = size;
+	}
+
+	public void setBounds(Rectangle bounds) {
+		setLocation(bounds.getLocation());
+		setDimension(bounds.getSize());
 	}
 }

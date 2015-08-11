@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import com.sample.calltree.ctrl.CtrlFactory;
+import com.sample.calltree.model.CTConnection;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.ui.CallTreeCanvas;
@@ -56,17 +57,23 @@ public class CallTreeMain extends ApplicationWindow {
 		CTRoot root = new CTRoot("root");
 		root.setBackgroundColor(ColorConstants.orange);
 		
-		CTItem ctItem = new CTItem("item1");
-		ctItem.setLocation(new Point(100,100));
-		ctItem.setBackgroundColor(ColorConstants.green);
-		ctItem.setDimension(new Dimension(70, 130));
-		root.addChild(ctItem);
+		CTItem ctItem1 = new CTItem("item1");
+		ctItem1.setLocation(new Point(100,100));
+		ctItem1.setBackgroundColor(ColorConstants.green);
+		ctItem1.setDimension(new Dimension(70, 130));
+		root.addChild(ctItem1);
 		
-		ctItem = new CTItem("item2");
-		ctItem.setLocation(new Point(20,70));
-		ctItem.setBackgroundColor(ColorConstants.darkGray);
-		ctItem.setDimension(new Dimension(70, 40));
-		root.addChild(ctItem);
+		CTItem ctItem2 = new CTItem("item2");
+		ctItem2.setLocation(new Point(20,70));
+		ctItem2.setBackgroundColor(ColorConstants.darkGray);
+		ctItem2.setDimension(new Dimension(70, 40));
+		root.addChild(ctItem2);
+		
+		CTConnection con1 = CTConnection.newInstance("con1");
+		con1.setSource(ctItem1);
+		con1.setTarget(ctItem2);
+		root.addConnection(con1);
+		
 		return root;
 	}
 
