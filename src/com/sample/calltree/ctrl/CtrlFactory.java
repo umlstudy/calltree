@@ -7,13 +7,16 @@ import com.sample.calltree.model.CTRoot;
 public class CtrlFactory {
 
 	public AbstractCtrl createCtrl(CTElement element) {
+		AbstractCtrl ctrl = null;
 		if ( element instanceof CTRoot ) {
-			return CTRootCtrl.newInstance((CTRoot)element);
+			ctrl = CTRootCtrl.newInstance((CTRoot)element);
 		} else if ( element instanceof CTItem ) {
-			return CTItemCtrl.newInstance((CTItem)element);
+			ctrl = CTItemCtrl.newInstance((CTItem)element);
+		} else {
+			throw new RuntimeException();
 		}
- 		
-		throw new RuntimeException();
+		element.setModelUpdateListener(ctrl);
+		return ctrl;
 	}
 
 	public static CtrlFactory newInstance() {

@@ -6,8 +6,10 @@ import org.eclipse.draw2d.IFigure;
 
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.model.CTElement;
+import com.sample.calltree.model.ModelUpdateListener;
+import com.sample.calltree.ui.CallTreeCanvas;
 
-public abstract class AbstractCtrl {
+public abstract class AbstractCtrl implements ModelUpdateListener {
 
 	private CTElement element;
 	private CTElementFigure figure;
@@ -72,6 +74,11 @@ public abstract class AbstractCtrl {
 	public void refresh() {
 		refreshVisuals();
 		refreshChildren();
+	}
+	
+	@Override
+	public void modelUpdated() {
+		refresh();
 	}
 	
 	protected void addChildVisual(AbstractCtrl childCtrl, int index) {

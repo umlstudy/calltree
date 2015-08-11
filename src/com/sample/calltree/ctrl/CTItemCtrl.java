@@ -28,6 +28,7 @@ public class CTItemCtrl extends FigureEventHandler {
 
 	@Override
 	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
+		super.applyElement2Figure(element, figure);
 		Assert.isLegal(element instanceof CTItem, "element instanceof CTItem");
 		CTItem item = (CTItem)element;
 		figure.setBounds(new Rectangle(item.getLocation(), item.getDimension()));

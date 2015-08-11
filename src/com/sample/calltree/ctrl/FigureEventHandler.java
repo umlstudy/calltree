@@ -11,7 +11,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 import com.sample.calltree.model.CTElement;
 
-public abstract class FigureEventHandler extends AbstractCtrl implements MouseListener, MouseMotionListener {
+public abstract class FigureEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
 
 	private Point location;
 

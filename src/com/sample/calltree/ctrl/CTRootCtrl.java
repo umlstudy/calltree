@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.figure.CTRootFigure;
-import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
+import com.sample.calltree.ui.CallTreeCanvas;
 
-public class CTRootCtrl extends AbstractCtrl {
+public class CTRootCtrl extends CTContainerCtrl {
 
 	private CallTreeCanvas callTreeCanvas;
 	
@@ -23,10 +23,6 @@ public class CTRootCtrl extends AbstractCtrl {
 	@Override
 	protected CTElementFigure createFigure() {
 		return new CTRootFigure();
-	}
-
-	@Override
-	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
 	}
 
 	@Override
