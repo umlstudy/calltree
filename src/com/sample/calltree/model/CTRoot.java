@@ -28,7 +28,7 @@ public class CTRoot extends CTContainer {
 		}
 		boolean rslt =  connections.add(connection);
 		
-		if ( !isDoNotNotify() && getModelUpdateListener() != null ) {
+		if ( needUpdateModel() && getModelUpdateListener() != null ) {
 			((CTRootListener)getModelUpdateListener()).connAdded(connection);
 		}
 		

@@ -8,12 +8,12 @@ public abstract class CTElement {
 	
 	private String name;
 	
-	private boolean doNotNotify;
+	private boolean needUpdateModel;
 	
 	private CTElementUpdateListener modelUpdateListener;
 
 	public CTElement(String name) {
-		this.setDoNotNotify(true);
+		this.setNeedUpdateModel(false);
 		this.setName(name);
 	}
 
@@ -26,7 +26,7 @@ public abstract class CTElement {
 	}
 	
 	public void fireModelUpdated() {
-		if( !isDoNotNotify() && getModelUpdateListener() != null ) {
+		if( needUpdateModel() && getModelUpdateListener() != null ) {
 			getModelUpdateListener().modelUpdated();
 		}
 	}
@@ -40,11 +40,11 @@ public abstract class CTElement {
 		this.modelUpdateListener = modelUpdateListener;
 	}
 
-	public boolean isDoNotNotify() {
-		return doNotNotify;
+	public boolean needUpdateModel() {
+		return needUpdateModel;
 	}
 
-	public void setDoNotNotify(boolean doNotNotify) {
-		this.doNotNotify = doNotNotify;
+	public void setNeedUpdateModel(boolean needUpdateModel) {
+		this.needUpdateModel = needUpdateModel;
 	}
 }

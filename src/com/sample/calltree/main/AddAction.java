@@ -31,7 +31,7 @@ public class AddAction extends Action {
 		int w = randomGenerator.nextInt(100)+10;
 		int h = randomGenerator.nextInt(100)+10;
 		item.setDimension(new Dimension(w,h));
-		selected.setDoNotNotify(false);
+		selected.setNeedUpdateModel(true);
 		selected.addChild(item);
 		viewer.refresh();
 	}

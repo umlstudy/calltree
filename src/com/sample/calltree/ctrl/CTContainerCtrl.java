@@ -97,8 +97,6 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 	@Override
 	public void modelAdded(CTItem item) {
 		getRootCtrl().addChildWithVisual(item);
-		//TODO
-		//addChildWithVisual(item);
 	}
 
 	@Override

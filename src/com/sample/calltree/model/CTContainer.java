@@ -33,7 +33,7 @@ public class CTContainer extends CTElement {
 		}
 		boolean rslt = childItems.add(item);
 		
-		if ( !isDoNotNotify() && getModelUpdateListener() != null ) {
+		if ( needUpdateModel() && getModelUpdateListener() != null ) {
 			((CTContainerListener)getModelUpdateListener()).modelAdded(item);
 		}
 		
