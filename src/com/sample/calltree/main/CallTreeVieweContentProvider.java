@@ -4,7 +4,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.sample.calltree.model.CTContainer;
-import com.sample.calltree.model.CTRoot;
 
 public class CallTreeVieweContentProvider implements ITreeContentProvider {
 
@@ -18,18 +17,13 @@ public class CallTreeVieweContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if ( inputElement instanceof Object[] ) {
-			return (Object[])inputElement;
-		} else if ( inputElement instanceof CTRoot ) {
-			return new Object[] {inputElement,};
-		}
-		return null;
+		return getChildren(inputElement);
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if ( parentElement instanceof CTContainer ) {
-			return ((CTContainer)parentElement).getChildren().toArray();
+			return ((CTContainer)parentElement).getChildItems().toArray();
 		}
 		return null;
 	}

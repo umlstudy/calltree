@@ -3,7 +3,6 @@ package com.sample.calltree.ui;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FigureCanvas;
-import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.FreeformViewport;
 import org.eclipse.draw2d.IFigure;
@@ -52,7 +51,7 @@ public class CallTreeCanvas extends FigureCanvas {
 		connections.setConnectionRouter(new ShortestPathConnectionRouter(primary));
 		layoutPane.add(connections, "Connections");
 		
-		rootCtrl.refresh();
+		rootCtrl.setConnectionLayer(connections);
 	}
 	
 	public void setContents(IFigure figure) {

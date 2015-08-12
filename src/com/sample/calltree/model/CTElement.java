@@ -2,13 +2,18 @@ package com.sample.calltree.model;
 
 import org.eclipse.core.runtime.Assert;
 
+import com.sample.calltree.model.listener.CTElementUpdateListener;
+
 public abstract class CTElement {
 	
 	private String name;
 	
-	private ModelUpdateListener modelUpdateListener;
+	private boolean doNotNotify;
+	
+	private CTElementUpdateListener modelUpdateListener;
 
 	public CTElement(String name) {
+		this.setDoNotNotify(true);
 		this.setName(name);
 	}
 
@@ -21,17 +26,25 @@ public abstract class CTElement {
 	}
 	
 	public void fireModelUpdated() {
-		if( getModelUpdateListener() != null ) {
+		if( !isDoNotNotify() && getModelUpdateListener() != null ) {
 			getModelUpdateListener().modelUpdated();
 		}
 	}
 
-	public ModelUpdateListener getModelUpdateListener() {
+	public CTElementUpdateListener getModelUpdateListener() {
 		return modelUpdateListener;
 	}
 
-	public void setModelUpdateListener(ModelUpdateListener modelUpdateListener) {
+	public void setModelUpdateListener(CTElementUpdateListener modelUpdateListener) {
 		Assert.isLegal(this.modelUpdateListener == null, "this.modelUpdateListener == null");
 		this.modelUpdateListener = modelUpdateListener;
+	}
+
+	public boolean isDoNotNotify() {
+		return doNotNotify;
+	}
+
+	public void setDoNotNotify(boolean doNotNotify) {
+		this.doNotNotify = doNotNotify;
 	}
 }

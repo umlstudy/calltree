@@ -1,32 +1,43 @@
 package com.sample.calltree.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 
+import com.sample.calltree.model.listener.CTContainerListener;
+
 public class CTContainer extends CTElement {
 
-	private List<CTItem> children;
+	private List<CTItem> childItems;
 	
 	private Color backgroundColor;
 
 	public CTContainer(String name) {
 		super(name);
-		setChildren(new ArrayList<CTItem>());
 	}
 
-	public List<CTItem> getChildren() {
-		return children;
+	@SuppressWarnings("unchecked")
+	public List<CTItem> getChildItems() {
+		if ( childItems == null ) {
+			return Collections.EMPTY_LIST;
+		}
+		return childItems;
 	}
 	
-	public void addChild(CTItem item) {
-		getChildren().add(item);
-	}
-
-	public void setChildren(List<CTItem> children) {
-		this.children = children;
+	public boolean addChild(CTItem item) {
+		if ( childItems == null ) {
+			childItems = new ArrayList<CTItem>();
+		}
+		boolean rslt = childItems.add(item);
+		
+		if ( !isDoNotNotify() && getModelUpdateListener() != null ) {
+			((CTContainerListener)getModelUpdateListener()).modelAdded(item);
+		}
+		
+		return rslt;
 	}
 
 	public Color getBackgroundColor() {

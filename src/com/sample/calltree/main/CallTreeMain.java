@@ -3,6 +3,9 @@ package com.sample.calltree.main;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -10,13 +13,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 
 import com.sample.calltree.ctrl.CtrlFactory;
 import com.sample.calltree.model.CTConnection;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.ui.CallTreeCanvas;
-import com.sample.calltree.ui.CallTreeViewer;
 
 public class CallTreeMain extends ApplicationWindow {
 
@@ -37,6 +40,8 @@ public class CallTreeMain extends ApplicationWindow {
 		tv.setLabelProvider(new CallTreeViewerLabelProvider());
 		tv.setContentProvider(new CallTreeVieweContentProvider());
 		
+		createContextMenu(tv);
+		
 		Composite gvParent = new Composite(parent, SWT.NONE);
 		gvParent.setLayout(glFactory.numColumns(1).create());
 		gvParent.setLayoutData(gdFactory.grab(true, true).create());
@@ -48,9 +53,25 @@ public class CallTreeMain extends ApplicationWindow {
 		CTRoot ctRoot = createDummyCTRoot();
 		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
 		canvas.setContents(ctRoot);
+		
+		ctRoot.setDoNotNotify(false);
+		ctRoot.fireModelUpdated();
 		tv.setInput(ctRoot);
 		
 		return parent;
+	}
+
+	private void createContextMenu(final CallTreeViewer tv) {
+		MenuManager menuMgr = new MenuManager();
+	    menuMgr.setRemoveAllWhenShown(true);
+	    menuMgr.addMenuListener(new IMenuListener() {
+			@Override
+	        public void menuAboutToShow(IMenuManager manager) {
+				tv.fillContextMenu(manager);
+	        }
+	    });
+	    Menu menu = menuMgr.createContextMenu(tv.getControl());
+	    tv.getControl().setMenu(menu);
 	}
 
 	private static CTRoot createDummyCTRoot() {
@@ -68,6 +89,12 @@ public class CallTreeMain extends ApplicationWindow {
 		ctItem2.setBackgroundColor(ColorConstants.darkGray);
 		ctItem2.setDimension(new Dimension(70, 40));
 		root.addChild(ctItem2);
+		
+		CTItem ctItem3 = new CTItem("item3");
+		ctItem3.setLocation(new Point(50,20));
+		ctItem3.setBackgroundColor(ColorConstants.darkGreen);
+		ctItem3.setDimension(new Dimension(30, 80));
+		root.addChild(ctItem3);
 		
 		CTConnection con1 = CTConnection.newInstance("con1");
 		con1.setSource(ctItem1);

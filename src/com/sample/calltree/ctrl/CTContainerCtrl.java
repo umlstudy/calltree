@@ -9,16 +9,18 @@ import org.eclipse.draw2d.IFigure;
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.model.CTContainer;
 import com.sample.calltree.model.CTElement;
+import com.sample.calltree.model.CTItem;
+import com.sample.calltree.model.listener.CTContainerListener;
 
-public abstract class CTContainerCtrl extends AbstractCtrl {
+public abstract class CTContainerCtrl extends AbstractCtrl implements CTContainerListener {
 	
-	private List<AbstractCtrl> children;
+	private List<AbstractCtrl> childCtrls;
 
 	protected CTContainerCtrl(CTElement element) {
 		super(element);
 	}
 	
-	protected abstract List<?> getElementChildren();
+	protected abstract List<CTItem> getChildItems();
 	
 	@Override
 	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
@@ -33,20 +35,32 @@ public abstract class CTContainerCtrl extends AbstractCtrl {
 	}
 	
 	public void refreshChildren() {
-		List<?> elementObjects = getElementChildren();
-		for (int i=0;i<elementObjects.size(); i++ ) {
-			CTElement element = (CTElement)elementObjects.get(i);
-			AbstractCtrl childCtrl = createCtrl(element);
-			addChildren(childCtrl, i);
-			addChildVisual(childCtrl, i);
+		List<CTItem> items = getChildItems();
+		for (int i=0;i<items.size(); i++ ) {
+			CTItem item = items.get(i);
+			addChildWithVisual(item, i);
 		}
 	}
 	
-	private void addChildren(AbstractCtrl childCtrl, int index) {
-		if ( getChildren() == null ) {
-			setChildren(new ArrayList<AbstractCtrl>());
+	protected void addChildWithVisual(CTItem item) {
+		addChildWithVisual(item, -1);
+	}
+	
+	private void addChildWithVisual(CTItem item, int index) {
+		AbstractCtrl childCtrl = createCtrl(item);
+		addChild(childCtrl, index);
+		addChildVisual(childCtrl, index);
+	}
+
+	private void addChild(AbstractCtrl childCtrl, int index) {
+		if ( getChildCtrls() == null ) {
+			setChildCtrls(new ArrayList<AbstractCtrl>());
 		}
-		getChildren().add(index, childCtrl);
+		if ( index < 0 ) {
+			getChildCtrls().add(childCtrl);
+		} else {
+			getChildCtrls().add(index, childCtrl);
+		}
 	}
 	
 	private void addChildVisual(AbstractCtrl childCtrl, int index) {
@@ -59,10 +73,10 @@ public abstract class CTContainerCtrl extends AbstractCtrl {
 		refreshChildren();
 	}
 	
-	protected AbstractCtrl findCtrlFormChildren(CTElement element) {
-		List<AbstractCtrl> children = getChildren();
-		if ( children != null ) {
-			for ( AbstractCtrl child : children ) {
+	protected AbstractCtrl findCtrlFormChildCtrls(CTElement element) {
+		List<AbstractCtrl> childCtrls = getChildCtrls();
+		if ( childCtrls != null ) {
+			for ( AbstractCtrl child : childCtrls ) {
 				if ( element == child.getElement() ) {
 					return child;
 				}
@@ -71,11 +85,24 @@ public abstract class CTContainerCtrl extends AbstractCtrl {
 		return null;
 	}
 
-	public List<AbstractCtrl> getChildren() {
-		return children;
+	public List<AbstractCtrl> getChildCtrls() {
+		return childCtrls;
 	}
 
-	public void setChildren(List<AbstractCtrl> children) {
-		this.children = children;
+	public void setChildCtrls(List<AbstractCtrl> childCtrls) {
+		this.childCtrls = childCtrls;
+	}
+	
+
+	@Override
+	public void modelAdded(CTItem item) {
+		getRootCtrl().addChildWithVisual(item);
+		//TODO
+		//addChildWithVisual(item);
+	}
+
+	@Override
+	public void modelRemoved(CTItem item) {
+		// TODO Auto-generated method stub
 	}
 }

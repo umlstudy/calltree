@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.sample.calltree.model.listener.CTRootListener;
+
 public class CTRoot extends CTContainer {
 
 	private List<CTConnection> connections;
@@ -24,6 +26,12 @@ public class CTRoot extends CTContainer {
 		if ( connections == null ) {
 			connections = new ArrayList<CTConnection>();
 		}
-		return connections.add(connection);
+		boolean rslt =  connections.add(connection);
+		
+		if ( !isDoNotNotify() && getModelUpdateListener() != null ) {
+			((CTRootListener)getModelUpdateListener()).connAdded(connection);
+		}
+		
+		return rslt;
 	}
 }

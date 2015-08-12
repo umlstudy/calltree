@@ -32,5 +32,7 @@ public class CTConnectionCtrl extends AbstractCtrl {
 		CTConnectionFigure connFigure = (CTConnectionFigure)figure;
 		connFigure.setSourceAnchor(new ChopboxAnchor(findCtrl(src).getFigure()));
 		connFigure.setTargetAnchor(new ChopboxAnchor(findCtrl(tar).getFigure()));
+		
+		connFigure.setAntialias(1);
 	}
 }

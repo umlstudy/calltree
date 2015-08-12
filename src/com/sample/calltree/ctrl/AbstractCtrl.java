@@ -2,10 +2,10 @@ package com.sample.calltree.ctrl;
 
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.model.CTElement;
-import com.sample.calltree.model.ModelUpdateListener;
+import com.sample.calltree.model.listener.CTElementUpdateListener;
 import com.sample.calltree.ui.CallTreeCanvas;
 
-public abstract class AbstractCtrl implements ModelUpdateListener {
+public abstract class AbstractCtrl implements CTElementUpdateListener {
 
 	private CTElement element;
 	private CTElementFigure figure;
@@ -57,7 +57,7 @@ public abstract class AbstractCtrl implements ModelUpdateListener {
 		return getRootCtrl().findCtrl(element);
 	}
 	
-	private CTRootCtrl getRootCtrl() {
+	protected final CTRootCtrl getRootCtrl() {
 		AbstractCtrl parent_ = this;
 		do {
 			if ( parent_.getParent() == null ) {
@@ -69,14 +69,10 @@ public abstract class AbstractCtrl implements ModelUpdateListener {
 	}
 
 	public void refresh() {
-		refreshVisuals();
 	}
 	
 	@Override
 	public void modelUpdated() {
 		refresh();
-	}
-	
-	public void refreshVisuals() {
 	}
 }

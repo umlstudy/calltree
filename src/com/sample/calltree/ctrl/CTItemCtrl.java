@@ -31,11 +31,13 @@ public class CTItemCtrl extends FigureEventHandler {
 		super.applyElement2Figure(element, figure);
 		Assert.isLegal(element instanceof CTItem, "element instanceof CTItem");
 		CTItem item = (CTItem)element;
-		figure.setBounds(new Rectangle(item.getLocation(), item.getDimension()));
+		CTItemFigure itemFigure = (CTItemFigure)figure;
+		itemFigure.setBounds(new Rectangle(item.getLocation(), item.getDimension()));
+		itemFigure.setText(item.getName());
 	}
 	
 	@Override
-	protected List<CTItem> getElementChildren() {
-		return ((CTItem)getElement()).getChildren();
+	protected List<CTItem> getChildItems() {
+		return ((CTItem)getElement()).getChildItems();
 	}
 }
