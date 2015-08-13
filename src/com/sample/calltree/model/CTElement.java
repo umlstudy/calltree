@@ -8,12 +8,12 @@ public abstract class CTElement {
 	
 	private String name;
 	
-	private boolean needUpdateModel;
+	private boolean allowFiringModelUpdate;
 	
 	private CTElementUpdateListener modelUpdateListener;
 
 	public CTElement(String name) {
-		this.setNeedUpdateModel(false);
+		this.setAllowFiringModelUpdate(false);
 		this.setName(name);
 	}
 
@@ -26,7 +26,7 @@ public abstract class CTElement {
 	}
 	
 	public void fireModelUpdated() {
-		if( needUpdateModel() && getModelUpdateListener() != null ) {
+		if( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
 			getModelUpdateListener().modelUpdated();
 		}
 	}
@@ -40,11 +40,11 @@ public abstract class CTElement {
 		this.modelUpdateListener = modelUpdateListener;
 	}
 
-	public boolean needUpdateModel() {
-		return needUpdateModel;
+	public boolean allowFiringModelUpdate() {
+		return allowFiringModelUpdate;
 	}
 
-	public void setNeedUpdateModel(boolean needUpdateModel) {
-		this.needUpdateModel = needUpdateModel;
+	public void setAllowFiringModelUpdate(boolean allowFiringModelUpdate) {
+		this.allowFiringModelUpdate = allowFiringModelUpdate;
 	}
 }

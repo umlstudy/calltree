@@ -40,4 +40,10 @@ public class CTItemCtrl extends FigureEventHandler {
 	protected List<CTItem> getChildItems() {
 		return ((CTItem)getElement()).getChildItems();
 	}
+	
+	@Override
+	public void refresh() {
+		applyElement2Figure(getElement(), getFigure());
+		getFigure().repaint();
+	}
 }

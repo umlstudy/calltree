@@ -14,6 +14,7 @@ public class CTContainer extends CTElement {
 	private List<CTItem> childItems;
 	
 	private Color backgroundColor;
+	private CTContainer owner;
 
 	public CTContainer(String name) {
 		super(name);
@@ -31,9 +32,10 @@ public class CTContainer extends CTElement {
 		if ( childItems == null ) {
 			childItems = new ArrayList<CTItem>();
 		}
+		item.setOwner(this);
 		boolean rslt = childItems.add(item);
 		
-		if ( needUpdateModel() && getModelUpdateListener() != null ) {
+		if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
 			((CTContainerListener)getModelUpdateListener()).modelAdded(item);
 		}
 		
@@ -47,5 +49,29 @@ public class CTContainer extends CTElement {
 	public void setBackgroundColor(Color backgroundColor) {
 		Assert.isNotNull(backgroundColor);
 		this.backgroundColor = backgroundColor;
+	}
+
+	private CTContainer getOwner() {
+		return owner;
+	}
+
+	protected void setOwner(CTContainer owner) {
+		this.owner = owner;
+	}
+	
+	public CTRoot getRoot() {
+		CTContainer target = this;
+		while ( true ) {
+			if ( target.getOwner() != null ) {
+				target = target.getOwner();
+			} else {
+				break;
+			}
+		}
+		if ( target instanceof CTRoot ) {
+			return (CTRoot)target;
+		} else {
+			throw new RuntimeException();
+		}
 	}
 }

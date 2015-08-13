@@ -142,6 +142,17 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	public void connRemoved(CTConnection conn) {
 		// TODO Auto-generated method stub
 	}
+//	
+//	public void updateSizeLocation() {
+//		if ( getRoot().updateSizeLocation() ) {
+//			for ( AbstractCtrl ctrl : getChildCtrls() ) {
+//				CTItem item = (CTItem)ctrl.getElement();
+//				if ( item.isInvalidate() ) {
+//					item.fireModelUpdated();
+//				}
+//			}
+//		}
+//	}
 	
 //	@Override
 //	protected List<CTItem> getModelChildren() {

@@ -9,6 +9,7 @@ public class CTItem extends CTContainer implements CTLocationElement, CTConnecti
 
 	private Point location;
 	private Dimension dimension;
+	
 	public CTItem(String name) {
 		super(name);
 	}

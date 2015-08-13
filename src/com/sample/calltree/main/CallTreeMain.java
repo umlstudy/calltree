@@ -54,7 +54,7 @@ public class CallTreeMain extends ApplicationWindow {
 		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
 		canvas.setContents(ctRoot);
 		
-		ctRoot.setNeedUpdateModel(true);
+		ctRoot.setAllowFiringModelUpdate(true);
 		ctRoot.fireModelUpdated();
 		tv.setInput(ctRoot);
 		
