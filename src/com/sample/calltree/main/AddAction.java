@@ -33,7 +33,7 @@ public class AddAction extends Action {
 		item.setDimension(new Dimension(w,h));
 		selected.setAllowFiringModelUpdate(true);
 		selected.addChild(item);
-		selected.getRoot().updateSizeAndLocation();
+		selected.getRoot().update();
 		viewer.refresh();
 	}
 }

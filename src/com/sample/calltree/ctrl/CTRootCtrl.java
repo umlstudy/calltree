@@ -125,7 +125,11 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		if ( getConnCtrls() == null ) {
 			setConnCtrls(new ArrayList<CTConnectionCtrl>());
 		}
-		getConnCtrls().add(index, connCtrl);
+		if ( index < 0 ) {
+			getConnCtrls().add(connCtrl);
+		} else {
+			getConnCtrls().add(index, connCtrl);
+		}
 	}
 
 	private void addConnectionVisual(CTConnectionCtrl connCtrl, int index) {

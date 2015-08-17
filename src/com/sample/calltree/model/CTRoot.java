@@ -38,40 +38,66 @@ public class CTRoot extends CTContainer {
 		return rslt;
 	}
 	
-	public void updateSizeAndLocation() {
-		Point curPoint = new Point(0,0);
-		Dimension curSize = new Dimension(120,30);
-		updateSizeLocation(getChildItems(), curPoint, curSize);
+	private static final int ITEM_WIDTH = 120;
+	private static final int ITEM_HEIGHT = 30;
+	
+	public void update() {
+		updateSizeAndLocation();
+		updateConnection();
+	}
+	
+	private void updateConnection() {
+		updateConnection(null, getChildItems());
+	}
+	
+	public void updateConnection(CTItem parentItem, List<CTItem> ctItems) {
+		for ( CTItem item : ctItems ) {
+			if ( parentItem != null ) {
+				CTConnection ctConnection = CTConnection.newInstance("con");
+				ctConnection.setSource(parentItem);
+				ctConnection.setTarget(item);
+				addConnection(ctConnection);
+			}
+			if ( item.getChildItems().size() > 0 ) {
+				updateConnection(item, item.getChildItems());
+			}
+		}
 	}
 
-	private void updateSizeLocation(List<CTItem> items, Point curPoint, Dimension curSize) {
-		for ( CTItem item : items ) {
-			Point oldLoc = item.getLocation();
-			boolean updated = false;
-			if ( curPoint.x != oldLoc.x || curPoint.y != oldLoc.y ) {
-				item.setLocation(new Point(curPoint));
-				updated = true;
+	private void updateSizeAndLocation() {
+		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems());
+		int curY = 0;
+		for ( int row=0;row<ctItems2Matrix[0].length; row++ ) {
+			int curX = 0;
+			for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+				if ( ctItems2Matrix[col][row] != null ) {
+					CTItem item = ctItems2Matrix[col][row];
+					boolean updated = false;
+					
+					// X
+					Point oldLoc = item.getLocation();
+					if ( curX != oldLoc.x || curY != oldLoc.y ) {
+						item.setLocation(new Point(curX, curY));
+						updated = true;
+					}
+					
+					// Y
+					Dimension oldSize = item.getDimension();
+					if ( ITEM_WIDTH != oldSize.width || ITEM_HEIGHT != oldSize.height ) {
+						item.setDimension(new Dimension(ITEM_WIDTH, ITEM_HEIGHT));
+						updated = true;
+					}
+					
+					if ( updated ) {
+						item.setAllowFiringModelUpdate(true);
+						item.fireModelUpdated();
+					}
+				}
+				
+				curX += 130;
 			}
 			
-			Dimension oldSize = item.getDimension();
-			if ( curSize.width != oldSize.width || curSize.height != oldSize.height ) {
-				item.setDimension(new Dimension(curSize));
-				updated = true;
-			}
-			
-			if ( updated ) {
-				item.setAllowFiringModelUpdate(true);
-				item.fireModelUpdated();
-			}
-			
-			if ( item.getChildItems().size()>0 ) {
-				int oriCurPointX = curPoint.x;
-				curPoint.x += 130;
-				updateSizeLocation(item.getChildItems(), curPoint, curSize);
-				curPoint.x = oriCurPointX;
-			}
-			
-			curPoint.y += 40;
+			curY += 40;
 		}
 	}
 }
