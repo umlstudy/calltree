@@ -33,10 +33,13 @@ public class CTContainer extends CTElement {
 			childItems = new ArrayList<CTItem>();
 		}
 		item.setOwner(this);
-		boolean rslt = childItems.add(item);
 		
-		if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
-			((CTContainerListener)getModelUpdateListener()).modelAdded(item);
+		boolean rslt = false;
+		if ( !childItems.contains(item) ) {
+			rslt =  childItems.add(item);
+			if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
+				((CTContainerListener)getModelUpdateListener()).modelAdded(item);
+			}
 		}
 		
 		return rslt;

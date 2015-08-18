@@ -29,10 +29,12 @@ public class CTRoot extends CTContainer {
 		if ( connections == null ) {
 			connections = new ArrayList<CTConnection>();
 		}
-		boolean rslt = connections.add(connection);
-		
-		if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
-			((CTRootListener)getModelUpdateListener()).connAdded(connection);
+		boolean rslt = false;
+		if ( !connections.contains(connection) ) {
+			rslt = connections.add(connection);
+			if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
+				((CTRootListener)getModelUpdateListener()).connAdded(connection);
+			}
 		}
 		
 		return rslt;
@@ -56,8 +58,12 @@ public class CTRoot extends CTContainer {
 				CTConnection ctConnection = CTConnection.newInstance("con");
 				ctConnection.setSource(parentItem);
 				ctConnection.setTarget(item);
-				addConnection(ctConnection);
+				// 이미 등록된 연결이 아닐 경우에만 등록
+				if ( !getConnections().contains(ctConnection) ) {
+					addConnection(ctConnection);
+				}
 			}
+			// 자식아이템에 대하여 재귀호출
 			if ( item.getChildItems().size() > 0 ) {
 				updateConnection(item, item.getChildItems());
 			}

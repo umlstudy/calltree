@@ -12,7 +12,20 @@ public class CTConnection extends CTElement {
 	public static CTConnection newInstance(String name) {
 		return new CTConnection(name);
 	}
-
+	
+	public int hashCode() {
+		return source.hashCode() + target.hashCode();
+	}
+	
+    public boolean equals(Object obj) {
+    	if ( obj instanceof CTConnection ) {
+    		CTConnection rightSide = (CTConnection)obj;
+    		return source.hashCode() == rightSide.source.hashCode() 
+    				&& target.hashCode() == rightSide.target.hashCode();
+    	}
+    	return false;
+    }
+	
 	public CTConnectionEndPoint getSource() {
 		return source;
 	}
