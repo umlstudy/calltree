@@ -1,5 +1,6 @@
 package com.sample.calltree.ctrl;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -12,11 +13,11 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 
-public abstract class FigureEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
+public abstract class CTItemEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
 
 	private Point location;
 
-	public FigureEventHandler(CTElement element) {
+	public CTItemEventHandler(CTElement element) {
 		super(element);
 		getFigure().addMouseListener(this);
 		getFigure().addMouseMotionListener(this);
@@ -75,9 +76,17 @@ public abstract class FigureEventHandler extends CTContainerCtrl implements Mous
 	}
 
 	public void mouseEntered(MouseEvent event) {
+		CTItem ctItem = (CTItem)getElement();
+		ctItem.setBackgroundColor(ColorConstants.lightGray);
+		ctItem.setAllowFiringModelUpdate(true);
+		ctItem.fireModelUpdated();
 	}
 
 	public void mouseExited(MouseEvent event) {
+		CTItem ctItem = (CTItem)getElement();
+		ctItem.setBackgroundColor(ColorConstants.lightBlue);
+		ctItem.setAllowFiringModelUpdate(true);
+		ctItem.fireModelUpdated();
 	}
 
 	public void mouseHover(MouseEvent event) {

@@ -72,6 +72,7 @@ public class CTRoot extends CTContainer {
 
 	private void updateSizeAndLocation() {
 		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems());
+		ctItems2Matrix = CTItems2MatrixConverter.verticalCenter(ctItems2Matrix);
 		int curY = 0;
 		for ( int row=0;row<ctItems2Matrix[0].length; row++ ) {
 			int curX = 0;
@@ -100,7 +101,7 @@ public class CTRoot extends CTContainer {
 					}
 				}
 				
-				curX += 130;
+				curX += 170;
 			}
 			
 			curY += 40;

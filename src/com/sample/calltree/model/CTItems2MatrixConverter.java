@@ -49,4 +49,30 @@ public class CTItems2MatrixConverter {
 			}
 		}
 	}
+
+	public static CTItem[][] verticalCenter(CTItem[][] ctItems2Matrix) {
+		CTItem[][] rslt = new CTItem[ctItems2Matrix.length][];
+		for ( int column = 0; column<ctItems2Matrix.length; column++ ) {
+			int rowCount = ctItems2Matrix[column].length;
+			int notNullCount = getNotNullCount(ctItems2Matrix[column]);
+			rslt[column] = new CTItem[rowCount];
+			int midStartIdx = (rowCount - notNullCount) / 2;
+			// copy
+			for ( int rowIdx=0;rowIdx<notNullCount;rowIdx++) {
+				rslt[column][midStartIdx+rowIdx] = ctItems2Matrix[column][rowIdx];
+			}
+		}
+		return rslt;
+	}
+
+	private static int getNotNullCount(CTItem[] row) {
+		int count = 0;
+		for ( int i=0; i<row.length; i++ ) {
+			if ( row[i] != null ) {
+				count++;
+			}
+		}
+		
+		return count;
+	}
 }

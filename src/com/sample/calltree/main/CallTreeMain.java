@@ -96,10 +96,10 @@ public class CallTreeMain extends ApplicationWindow {
 		ctItem3.setDimension(new Dimension(30, 80));
 		root.addChild(ctItem3);
 		
-		CTConnection con1 = CTConnection.newInstance("con1");
-		con1.setSource(ctItem1);
-		con1.setTarget(ctItem2);
-		root.addConnection(con1);
+//		CTConnection con1 = CTConnection.newInstance("con1");
+//		con1.setSource(ctItem1);
+//		con1.setTarget(ctItem2);
+//		root.addConnection(con1);
 		
 		return root;
 	}
