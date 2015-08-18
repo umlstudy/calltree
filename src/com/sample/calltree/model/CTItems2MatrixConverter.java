@@ -65,7 +65,7 @@ public class CTItems2MatrixConverter {
 		return rslt;
 	}
 
-	private static int getNotNullCount(CTItem[] row) {
+	public static int getNotNullCount(CTItem[] row) {
 		int count = 0;
 		for ( int i=0; i<row.length; i++ ) {
 			if ( row[i] != null ) {

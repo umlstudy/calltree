@@ -103,6 +103,7 @@ public class CTRoot extends CTContainer {
 				
 				curX += 170;
 			}
+			//CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[c]);
 			
 			curY += 40;
 		}
