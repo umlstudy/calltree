@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
 import com.sample.calltree.ctrl.CtrlFactory;
-import com.sample.calltree.model.CTConnection;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.ui.CallTreeCanvas;

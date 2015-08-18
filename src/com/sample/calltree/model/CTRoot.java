@@ -73,10 +73,25 @@ public class CTRoot extends CTContainer {
 	private void updateSizeAndLocation() {
 		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems());
 		ctItems2Matrix = CTItems2MatrixConverter.verticalCenter(ctItems2Matrix);
-		int curY = 0;
-		for ( int row=0;row<ctItems2Matrix[0].length; row++ ) {
-			int curX = 0;
-			for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+		
+		//
+		int maxRowCnt = 0;
+		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+			maxRowCnt = maxRowCnt > curRowCnt ? maxRowCnt : curRowCnt;
+		}
+		int curX = 0;
+		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+			int curY = 0;
+			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+			if ( curRowCnt < maxRowCnt ) {
+				if ( (maxRowCnt % 2) != (curRowCnt % 2) ) {
+//					curY  = (curRowCnt % 2) == 1 ? 20 : 0;
+					curY = 20;
+				}
+//				curY *= (maxRowCnt % 2) == 0 ? -1 : 1;
+			}
+			for ( int row=0;row<ctItems2Matrix[col].length; row++ ) {
 				if ( ctItems2Matrix[col][row] != null ) {
 					CTItem item = ctItems2Matrix[col][row];
 					boolean updated = false;
@@ -101,11 +116,9 @@ public class CTRoot extends CTContainer {
 					}
 				}
 				
-				curX += 170;
+				curY += 40;
 			}
-			//CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[c]);
-			
-			curY += 40;
+			curX += 170;
 		}
 	}
 }
