@@ -1,5 +1,7 @@
 package com.sample.calltree.main;
 
+import java.util.Random;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -10,13 +12,17 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
 import com.sample.calltree.ctrl.CtrlFactory;
-import com.sample.calltree.model.CTConnection;
+import com.sample.calltree.model.CTContainer;
+import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.ui.CallTreeCanvas;
@@ -24,6 +30,7 @@ import com.sample.calltree.ui.CallTreeCanvas;
 public class CallTreeMain extends ApplicationWindow {
 
 	private CallTreeViewer tv;
+	private CTRoot ctRoot;
 	
 	public CallTreeMain() {
 		super(null);
@@ -50,15 +57,79 @@ public class CallTreeMain extends ApplicationWindow {
 		//canvas.setBackground(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		canvas.setCtrlFactory(CtrlFactory.newInstance());
 		
-		CTRoot ctRoot = createDummyCTRoot();
+		ctRoot = createDummyCTRoot();
 		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
 		canvas.setContents(ctRoot);
 		
 		ctRoot.setAllowFiringModelUpdate(true);
 		ctRoot.fireModelUpdated();
+		
+		getShell().addShellListener(new ShellAdapter() {
+			
+			boolean firstShow = true;
+			@Override
+			public void shellActivated(ShellEvent e) {
+				if ( firstShow ) {
+					appStarted();
+					firstShow = false;
+				}
+			}
+		});
 		tv.setInput(ctRoot);
 		
 		return parent;
+	}
+
+	protected void appStarted() {
+		int itemCnt = getItemCnt(ctRoot) + 1;
+		Random r = new Random();
+		int randomPos = r.nextInt(itemCnt);
+		final CTElement cont = getItem(ctRoot, randomPos, 0);
+		final CTItem ctItem1 = new CTItem("item1");
+		ctItem1.setLocation(new Point(100,100));
+		ctItem1.setBackgroundColor(ColorConstants.green);
+		ctItem1.setDimension(new Dimension(170, 130));
+
+		((CTContainer)cont).addChild(ctItem1);
+
+		ctRoot.fireModelUpdated();
+//		getShell().getDisplay().syncExec(new Runnable() {
+//			@Override
+//			public void run() {
+//				((CTContainer)cont).addChild(ctItem1);
+////				ctRoot.fireModelUpdated();
+//			}
+//		});
+	}
+
+	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
+		if ( randomPos == 0 ) return cont;
+		
+		for ( CTElement ele : cont.getChildItems() ) {
+			curPos ++;
+			if ( randomPos == curPos ) return ele;
+			if ( ele instanceof CTContainer ) {
+				CTContainer ctc = (CTContainer)ele;
+				CTElement ele2 = getItem(ctc, randomPos, curPos);
+				if ( ele2 != null ) {
+					return ele2;
+				} else {
+					curPos += getItemCnt(ctc);
+				}
+			}
+		} 
+		return null;
+	}
+
+	private int getItemCnt(CTContainer cont) {
+		int cnt = cont.getChildItems().size();
+		for ( CTElement ele : cont.getChildItems() ) {
+			if ( ele instanceof CTContainer ) {
+				CTContainer ctc = (CTContainer)ele;
+				cnt += getItemCnt(ctc);
+			}
+		} 
+		return cnt;
 	}
 
 	private void createContextMenu(final CallTreeViewer tv) {

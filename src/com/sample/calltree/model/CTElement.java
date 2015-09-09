@@ -36,7 +36,7 @@ public abstract class CTElement {
 	}
 
 	public void setModelUpdateListener(CTElementUpdateListener modelUpdateListener) {
-		Assert.isLegal(this.modelUpdateListener == null, "this.modelUpdateListener == null");
+		//Assert.isLegal(this.modelUpdateListener == null, "this.modelUpdateListener == null");
 		this.modelUpdateListener = modelUpdateListener;
 	}
 

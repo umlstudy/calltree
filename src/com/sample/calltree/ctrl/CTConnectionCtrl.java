@@ -1,5 +1,6 @@
 package com.sample.calltree.ctrl;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.ChopboxAnchor;
 
 import com.sample.calltree.figure.CTConnectionFigure;
@@ -32,6 +33,8 @@ public class CTConnectionCtrl extends AbstractCtrl {
 		CTConnectionFigure connFigure = (CTConnectionFigure)figure;
 		CTItemCtrl srcCtrl = (CTItemCtrl)findCtrl(src);
 		CTItemCtrl tarCtrl = (CTItemCtrl)findCtrl(tar);
+		Assert.isNotNull(srcCtrl);
+		Assert.isNotNull(tarCtrl);
 		connFigure.setSourceAnchor(new ChopboxAnchor(srcCtrl.getTargetEndPoingFigure()));
 		connFigure.setTargetAnchor(new ChopboxAnchor(tarCtrl.getSourceEndPoingFigure()));
 		
