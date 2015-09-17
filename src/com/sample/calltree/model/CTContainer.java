@@ -14,7 +14,6 @@ public class CTContainer extends CTElement {
 	private List<CTItem> childItems;
 	
 	private Color backgroundColor;
-	private CTContainer owner;
 
 	public CTContainer(String name) {
 		super(name);
@@ -40,6 +39,17 @@ public class CTContainer extends CTElement {
 			if ( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
 				((CTContainerListener)getModelUpdateListener()).modelAdded(item);
 			}
+			
+			CTRoot root = getRoot();
+			if ( this instanceof CTItem ) {
+				CTConnection ctConnection = CTConnection.newInstance("con");
+				ctConnection.setSource((CTItem)this);
+				ctConnection.setTarget(item);
+				// 이미 등록된 연결이 아닐 경우에만 등록
+				if ( !root.getConnections().contains(ctConnection) ) {
+					root.addConnection(ctConnection);
+				}
+			}
 		}
 		
 		return rslt;
@@ -54,14 +64,6 @@ public class CTContainer extends CTElement {
 		this.backgroundColor = backgroundColor;
 	}
 
-	private CTContainer getOwner() {
-		return owner;
-	}
-
-	protected void setOwner(CTContainer owner) {
-		this.owner = owner;
-	}
-	
 	public CTRoot getRoot() {
 		CTContainer target = this;
 		while ( true ) {

@@ -83,22 +83,15 @@ public class CallTreeMain extends ApplicationWindow {
 		int itemCnt = getItemCnt(ctRoot) + 1;
 		Random r = new Random();
 		int randomPos = r.nextInt(itemCnt);
-		final CTElement cont = getItem(ctRoot, randomPos, 0);
-		final CTItem ctItem1 = new CTItem("item1");
-		ctItem1.setLocation(new Point(100,100));
-		ctItem1.setBackgroundColor(ColorConstants.green);
-		ctItem1.setDimension(new Dimension(170, 130));
+		randomPos = 3;
+		final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
+		final CTItem ctItem1 = new CTItem("xxxx");
+		ctItem1.setLocation(new Point(20,20));
+		ctItem1.setBackgroundColor(ColorConstants.black);
+		ctItem1.setDimension(new Dimension(170, 10));
 
-		((CTContainer)cont).addChild(ctItem1);
-
-		ctRoot.fireModelUpdated();
-//		getShell().getDisplay().syncExec(new Runnable() {
-//			@Override
-//			public void run() {
-//				((CTContainer)cont).addChild(ctItem1);
-////				ctRoot.fireModelUpdated();
-//			}
-//		});
+		container.addChild(ctItem1);
+		ctRoot.update();
 	}
 
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {

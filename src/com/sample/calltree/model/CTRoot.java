@@ -45,30 +45,30 @@ public class CTRoot extends CTContainer {
 	
 	public void update() {
 		updateSizeAndLocation();
-		updateConnection();
+//		updateConnection();
 	}
 	
-	private void updateConnection() {
-		updateConnection(null, getChildItems());
-	}
-	
-	public void updateConnection(CTItem parentItem, List<CTItem> ctItems) {
-		for ( CTItem item : ctItems ) {
-			if ( parentItem != null ) {
-				CTConnection ctConnection = CTConnection.newInstance("con");
-				ctConnection.setSource(parentItem);
-				ctConnection.setTarget(item);
-				// 이미 등록된 연결이 아닐 경우에만 등록
-				if ( !getConnections().contains(ctConnection) ) {
-					addConnection(ctConnection);
-				}
-			}
-			// 자식아이템에 대하여 재귀호출
-			if ( item.getChildItems().size() > 0 ) {
-				updateConnection(item, item.getChildItems());
-			}
-		}
-	}
+//	private void updateConnection() {
+//		updateConnection(null, getChildItems());
+//	}
+//	
+//	public void updateConnection(CTItem parentItem, List<CTItem> ctItems) {
+//		for ( CTItem item : ctItems ) {
+//			if ( parentItem != null ) {
+//				CTConnection ctConnection = CTConnection.newInstance("con");
+//				ctConnection.setSource(parentItem);
+//				ctConnection.setTarget(item);
+//				// 이미 등록된 연결이 아닐 경우에만 등록
+//				if ( !getConnections().contains(ctConnection) ) {
+//					addConnection(ctConnection);
+//				}
+//			}
+//			// 자식아이템에 대하여 재귀호출
+//			if ( item.getChildItems().size() > 0 ) {
+//				updateConnection(item, item.getChildItems());
+//			}
+//		}
+//	}
 
 	private void updateSizeAndLocation() {
 		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems());

@@ -50,6 +50,7 @@ public class CTItemCtrl extends CTItemEventHandler {
 	
 	@Override
 	public void refresh() {
+		super.refresh();
 		applyElement2Figure(getElement(), getFigure());
 		getFigure().repaint();
 	}

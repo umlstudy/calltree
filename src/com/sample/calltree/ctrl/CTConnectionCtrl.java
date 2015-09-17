@@ -33,6 +33,20 @@ public class CTConnectionCtrl extends AbstractCtrl {
 		CTConnectionFigure connFigure = (CTConnectionFigure)figure;
 		CTItemCtrl srcCtrl = (CTItemCtrl)findCtrl(src);
 		CTItemCtrl tarCtrl = (CTItemCtrl)findCtrl(tar);
+		if ( tarCtrl == null ) {
+			tar.getOwner().setAllowFiringModelUpdate(true);
+			tar.getOwner().fireModelUpdated();
+			tarCtrl = (CTItemCtrl)findCtrl(tar);
+		}
+		if ( srcCtrl == null ) {
+			tar.getOwner().setAllowFiringModelUpdate(true);
+			src.getOwner().fireModelUpdated();
+			srcCtrl = (CTItemCtrl)findCtrl(src);
+		}
+//		if ( srcCtrl == null ) {
+//			
+//		}
+//		getCallTreeCanvas().getCtrlFactory().createCtrl(tar.get, tar);
 		Assert.isNotNull(srcCtrl);
 		Assert.isNotNull(tarCtrl);
 		connFigure.setSourceAnchor(new ChopboxAnchor(srcCtrl.getTargetEndPoingFigure()));

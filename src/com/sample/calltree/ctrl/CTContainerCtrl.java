@@ -1,8 +1,8 @@
 package com.sample.calltree.ctrl;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.map.ListOrderedMap;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.IFigure;
 
@@ -14,7 +14,7 @@ import com.sample.calltree.model.listener.CTContainerListener;
 
 public abstract class CTContainerCtrl extends AbstractCtrl implements CTContainerListener {
 	
-	private List<AbstractCtrl> childCtrls;
+	private ListOrderedMap childCtrls;
 
 	protected CTContainerCtrl(CTElement element) {
 		super(element);
@@ -47,19 +47,27 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 	}
 	
 	private void addChildWithVisual(CTItem item, int index) {
-		AbstractCtrl childCtrl = createCtrl(item);
-		addChild(childCtrl, index);
+		if ( getChildCtrls() == null ) {
+			setChildCtrls(new ListOrderedMap());
+		}
+		
+		AbstractCtrl childCtrl = (AbstractCtrl)getChildCtrls().get(item);
+		if ( childCtrl == null ) {
+			childCtrl = createCtrl(item);
+			addChild(item, childCtrl, index);
+		}
+		
 		addChildVisual(childCtrl, index);
 	}
 
-	private void addChild(AbstractCtrl childCtrl, int index) {
+	private void addChild(CTItem item, AbstractCtrl childCtrl, int index) {
 		if ( getChildCtrls() == null ) {
-			setChildCtrls(new ArrayList<AbstractCtrl>());
+			setChildCtrls(new ListOrderedMap());
 		}
 		if ( index < 0 ) {
-			getChildCtrls().add(childCtrl);
+			getChildCtrls().put(item, childCtrl);
 		} else {
-			getChildCtrls().add(index, childCtrl);
+			getChildCtrls().put(index, item, childCtrl);
 		}
 	}
 	
@@ -74,22 +82,18 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 	}
 	
 	protected AbstractCtrl findCtrlFormChildCtrls(CTElement element) {
-		List<AbstractCtrl> childCtrls = getChildCtrls();
+		ListOrderedMap childCtrls = getChildCtrls();
 		if ( childCtrls != null ) {
-			for ( AbstractCtrl child : childCtrls ) {
-				if ( element == child.getElement() ) {
-					return child;
-				}
-			}
+			return (AbstractCtrl)childCtrls.get(element);
 		}
 		return null;
 	}
 
-	public List<AbstractCtrl> getChildCtrls() {
+	public ListOrderedMap getChildCtrls() {
 		return childCtrls;
 	}
 
-	public void setChildCtrls(List<AbstractCtrl> childCtrls) {
+	public void setChildCtrls(ListOrderedMap childCtrls) {
 		this.childCtrls = childCtrls;
 	}
 	

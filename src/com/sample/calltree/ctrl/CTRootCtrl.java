@@ -1,8 +1,8 @@
 package com.sample.calltree.ctrl;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.map.ListOrderedMap;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.IFigure;
 
@@ -20,7 +20,7 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	private CallTreeCanvas callTreeCanvas;
 	private ConnectionLayer connectionLayer;
 	
-	private List<CTConnectionCtrl> connCtrls;
+	private ListOrderedMap connCtrls;
 	
 	private CTRootCtrl(CTRoot ctRoot) {
 		super(ctRoot);
@@ -61,13 +61,9 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 	
 	private AbstractCtrl findCtrlFormConnCtrls(CTConnection connection) {
-		List<CTConnectionCtrl> ctrls = getConnCtrls();
+		ListOrderedMap ctrls = getConnCtrls();
 		if ( ctrls != null ) {
-			for (CTConnectionCtrl ctrl : ctrls ) {
-				if ( ctrl.getElement() == connection ) {
-					return ctrl;
-				}
-			}
+			return (AbstractCtrl)ctrls.get(connection);
 		}
 		return null;
 	}
@@ -90,11 +86,11 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		return ctrl;
 	}
 
-	public List<CTConnectionCtrl> getConnCtrls() {
+	public ListOrderedMap getConnCtrls() {
 		return connCtrls;
 	}
 
-	public void setConnCtrls(List<CTConnectionCtrl> connectionCtrls) {
+	public void setConnCtrls(ListOrderedMap connectionCtrls) {
 		this.connCtrls = connectionCtrls;
 	}
 	
@@ -116,19 +112,27 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 	
 	private void addConnectionWithVisual(CTConnection conn, int index) {
-		CTConnectionCtrl connCtrl = (CTConnectionCtrl)createCtrl(conn);
-		addConnection(connCtrl, index);
+		if ( getConnCtrls() == null ) {
+			setConnCtrls(new ListOrderedMap());
+		}
+		
+		CTConnectionCtrl connCtrl = (CTConnectionCtrl)getConnCtrls().get(conn);
+		if ( connCtrl == null ) {
+			connCtrl = (CTConnectionCtrl)createCtrl(conn);
+			addConnection(conn, connCtrl, index);
+		}
+		
 		addConnectionVisual(connCtrl, index);
 	}
 
-	private void addConnection(CTConnectionCtrl connCtrl, int index) {
+	private void addConnection(CTConnection conn, CTConnectionCtrl connCtrl, int index) {
 		if ( getConnCtrls() == null ) {
-			setConnCtrls(new ArrayList<CTConnectionCtrl>());
+			setConnCtrls(new ListOrderedMap());
 		}
 		if ( index < 0 ) {
-			getConnCtrls().add(connCtrl);
+			getConnCtrls().put(conn, connCtrl);
 		} else {
-			getConnCtrls().add(index, connCtrl);
+			getConnCtrls().put(index, conn, connCtrl);
 		}
 	}
 

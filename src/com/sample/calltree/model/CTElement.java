@@ -8,6 +8,8 @@ public abstract class CTElement {
 	
 	private String name;
 	
+	private CTContainer owner;
+	
 	private boolean allowFiringModelUpdate;
 	
 	private CTElementUpdateListener modelUpdateListener;
@@ -36,8 +38,7 @@ public abstract class CTElement {
 	}
 
 	public void setModelUpdateListener(CTElementUpdateListener modelUpdateListener) {
-		// TODO
-		//Assert.isLegal(this.modelUpdateListener == null, "this.modelUpdateListener == null");
+		Assert.isTrue(this.modelUpdateListener == null, "this.modelUpdateListener != null");
 		this.modelUpdateListener = modelUpdateListener;
 	}
 
@@ -47,5 +48,13 @@ public abstract class CTElement {
 
 	public void setAllowFiringModelUpdate(boolean allowFiringModelUpdate) {
 		this.allowFiringModelUpdate = allowFiringModelUpdate;
+	}
+	
+	public CTContainer getOwner() {
+		return owner;
+	}
+
+	public void setOwner(CTContainer owner) {
+		this.owner = owner;
 	}
 }
