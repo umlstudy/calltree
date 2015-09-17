@@ -80,18 +80,20 @@ public class CallTreeMain extends ApplicationWindow {
 	}
 
 	protected void appStarted() {
-		int itemCnt = getItemCnt(ctRoot) + 1;
-		Random r = new Random();
-		int randomPos = r.nextInt(itemCnt);
-		randomPos = 3;
-		final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
-		final CTItem ctItem1 = new CTItem("xxxx");
-		ctItem1.setLocation(new Point(20,20));
-		ctItem1.setBackgroundColor(ColorConstants.black);
-		ctItem1.setDimension(new Dimension(170, 10));
-
-		container.addChild(ctItem1);
+		// 임의의 샘플 데이터를 30개 생성함
+		for ( int i=0; i<30; i++ ) {
+			int itemCnt = getItemCnt(ctRoot) + 1;
+			Random r = new Random();
+			int randomPos = r.nextInt(itemCnt);
+			final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
+			final CTItem ctItem1 = new CTItem("xxxx");
+			ctItem1.setLocation(new Point(20,20));
+			ctItem1.setBackgroundColor(ColorConstants.black);
+			ctItem1.setDimension(new Dimension(170, 10));
+			container.addChild(ctItem1);
+		}
 		ctRoot.update();
+		tv.refresh();
 	}
 
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {

@@ -7,6 +7,7 @@ import com.sample.calltree.figure.CTConnectionFigure;
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.model.CTConnection;
 import com.sample.calltree.model.CTElement;
+import com.sample.calltree.model.CTItem;
 
 public class CTConnectionCtrl extends AbstractCtrl {
 
@@ -27,15 +28,14 @@ public class CTConnectionCtrl extends AbstractCtrl {
 	@Override
 	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
 		CTConnection connModel = (CTConnection)getElement();
-		CTElement src = (CTElement)connModel.getSource();
-		CTElement tar = (CTElement)connModel.getTarget();
+		CTItem src = (CTItem)connModel.getSource();
+		CTItem tar = (CTItem)connModel.getTarget();
 		
 		CTConnectionFigure connFigure = (CTConnectionFigure)figure;
 		CTItemCtrl srcCtrl = (CTItemCtrl)findCtrl(src);
 		CTItemCtrl tarCtrl = (CTItemCtrl)findCtrl(tar);
 		if ( tarCtrl == null ) {
-			tar.getOwner().setAllowFiringModelUpdate(true);
-			tar.getOwner().fireModelUpdated();
+			getRootCtrl().addChildWithVisual(tar);
 			tarCtrl = (CTItemCtrl)findCtrl(tar);
 		}
 		if ( srcCtrl == null ) {
