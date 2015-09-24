@@ -44,8 +44,8 @@ public class CTItems2MatrixConverter {
 			// column
 			rowDatas.add(item);
 			
-			if ( item.getChildItems().size() > 0 ) {
-				convert(colDatas, item.getChildItems(), column+1);
+			if ( item.getChildItems(true).size() > 0 ) {
+				convert(colDatas, item.getChildItems(true), column+1);
 			}
 		}
 	}

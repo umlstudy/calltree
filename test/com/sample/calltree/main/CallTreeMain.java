@@ -86,9 +86,9 @@ public class CallTreeMain extends ApplicationWindow {
 			Random r = new Random();
 			int randomPos = r.nextInt(itemCnt);
 			final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
-			final CTItem ctItem1 = new CTItem("xxxx");
+			final CTItem ctItem1 = new CTItem(String.format("%d", i));
 			ctItem1.setLocation(new Point(20,20));
-			ctItem1.setBackgroundColor(ColorConstants.black);
+			ctItem1.setBackgroundColor(ColorConstants.lightBlue);
 			ctItem1.setDimension(new Dimension(170, 10));
 			container.addChild(ctItem1);
 		}
@@ -99,7 +99,7 @@ public class CallTreeMain extends ApplicationWindow {
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
 		if ( randomPos == 0 ) return cont;
 		
-		for ( CTElement ele : cont.getChildItems() ) {
+		for ( CTElement ele : cont.getChildItems(true) ) {
 			curPos ++;
 			if ( randomPos == curPos ) return ele;
 			if ( ele instanceof CTContainer ) {
@@ -116,8 +116,8 @@ public class CallTreeMain extends ApplicationWindow {
 	}
 
 	private int getItemCnt(CTContainer cont) {
-		int cnt = cont.getChildItems().size();
-		for ( CTElement ele : cont.getChildItems() ) {
+		int cnt = cont.getChildItems(true).size();
+		for ( CTElement ele : cont.getChildItems(true) ) {
 			if ( ele instanceof CTContainer ) {
 				CTContainer ctc = (CTContainer)ele;
 				cnt += getItemCnt(ctc);

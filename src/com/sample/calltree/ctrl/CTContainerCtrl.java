@@ -16,7 +16,7 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 		super(element);
 	}
 	
-	protected abstract List<CTItem> getChildItems();
+	protected abstract List<CTItem> getChildItems(boolean checkCollapsed);
 	
 	@Override
 	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {

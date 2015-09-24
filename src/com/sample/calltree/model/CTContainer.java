@@ -14,14 +14,16 @@ public class CTContainer extends CTElement {
 	private List<CTItem> childItems;
 	
 	private Color backgroundColor;
+	
+	private boolean isCollapsed;
 
 	public CTContainer(String name) {
 		super(name);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CTItem> getChildItems() {
-		if ( childItems == null ) {
+	public List<CTItem> getChildItems(boolean checkCollapsed) {
+		if ( childItems == null || (checkCollapsed && isCollapsed ) ) {
 			return Collections.EMPTY_LIST;
 		}
 		return childItems;
@@ -78,5 +80,17 @@ public class CTContainer extends CTElement {
 		} else {
 			throw new RuntimeException();
 		}
+	}
+
+	public void toggleCollapsed() {
+		setCollapsed(!isCollapsed());
+	}
+
+	public boolean isCollapsed() {
+		return isCollapsed;
+	}
+
+	public void setCollapsed(boolean isCollapsed) {
+		this.isCollapsed = isCollapsed;
 	}
 }

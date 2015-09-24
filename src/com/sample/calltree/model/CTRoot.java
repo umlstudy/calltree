@@ -71,7 +71,7 @@ public class CTRoot extends CTContainer {
 //	}
 
 	private void updateSizeAndLocation() {
-		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems());
+		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems(true));
 		ctItems2Matrix = CTItems2MatrixConverter.verticalCenter(ctItems2Matrix);
 		
 		//

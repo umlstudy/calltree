@@ -41,8 +41,8 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 
 	@Override
-	protected List<CTItem> getChildItems() {
-		return getRoot().getChildItems();
+	protected List<CTItem> getChildItems(boolean checkCollapsed) {
+		return getRoot().getChildItems(checkCollapsed);
 	}
 	
 	protected CallTreeCanvas getCallTreeCanvas() {
@@ -205,7 +205,7 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 	
 	public void refreshChildren() {
-		List<CTItem> items = getChildItems();
+		List<CTItem> items = getChildItems(true);
 		for (int i=0;i<items.size(); i++ ) {
 			CTItem item = items.get(i);
 			addChildWithVisual(item, i);

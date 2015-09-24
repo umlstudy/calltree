@@ -44,8 +44,8 @@ public class CTItemCtrl extends CTItemEventHandler {
 	}
 	
 	@Override
-	protected List<CTItem> getChildItems() {
-		return ((CTItem)getElement()).getChildItems();
+	protected List<CTItem> getChildItems(boolean checkCollapsed) {
+		return ((CTItem)getElement()).getChildItems(checkCollapsed);
 	}
 	
 	@Override

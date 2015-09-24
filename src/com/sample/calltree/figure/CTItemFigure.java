@@ -36,7 +36,9 @@ public class CTItemFigure extends RoundedRectangle implements CTContainerFigure 
 	}
 	
 	public void setText(String text) {
-		//label.setText(text);
+		if ( centerFigure instanceof Label ) {
+			((Label)centerFigure).setText(text);
+		}
 	}
 	
 	public void setBounds(Rectangle rect) {

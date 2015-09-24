@@ -23,7 +23,7 @@ public class CallTreeVieweContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if ( parentElement instanceof CTContainer ) {
-			return ((CTContainer)parentElement).getChildItems().toArray();
+			return ((CTContainer)parentElement).getChildItems(true).toArray();
 		}
 		return null;
 	}

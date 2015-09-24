@@ -73,6 +73,10 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 	}
 
 	public void mouseDoubleClicked(MouseEvent event) {
+		CTItem ctItem = (CTItem)getElement();
+		ctItem.toggleCollapsed();
+		ctItem.getRoot().update();
+		ctItem.getRoot().fireModelUpdated();
 	}
 
 	public void mouseEntered(MouseEvent event) {
