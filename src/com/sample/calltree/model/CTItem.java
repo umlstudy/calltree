@@ -14,8 +14,11 @@ public class CTItem extends CTContainer implements CTLocationElement, CTConnecti
 	private Color defaultBackgroundColor;
 	private Color mouseOverBackgroundColor;
 	
+	private boolean isVisible;
+	
 	public CTItem(String name) {
 		super(name);
+		setVisible(true);
 	}
 
 	@Override
@@ -59,5 +62,13 @@ public class CTItem extends CTContainer implements CTLocationElement, CTConnecti
 
 	public void setMouseOverBackgroundColor(Color mouseOverBackgroundColor) {
 		this.mouseOverBackgroundColor = mouseOverBackgroundColor;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 }

@@ -4,6 +4,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.sample.calltree.model.CTContainer;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 
 public class CallTreeVieweContentProvider implements ITreeContentProvider {
 
@@ -23,7 +24,7 @@ public class CallTreeVieweContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if ( parentElement instanceof CTContainer ) {
-			return ((CTContainer)parentElement).getChildItems(true).toArray();
+			return ((CTContainer)parentElement).getChildItems(ChildItemSelectOptions.VisibleOnly).toArray();
 		}
 		return null;
 	}

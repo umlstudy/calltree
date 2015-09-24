@@ -11,6 +11,7 @@ import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.figure.CTItemFigure;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 
 public class CTItemCtrl extends CTItemEventHandler {
 
@@ -44,8 +45,8 @@ public class CTItemCtrl extends CTItemEventHandler {
 	}
 	
 	@Override
-	protected List<CTItem> getChildItems(boolean checkCollapsed) {
-		return ((CTItem)getElement()).getChildItems(checkCollapsed);
+	protected List<CTItem> getChildItems(ChildItemSelectOptions option) {
+		return ((CTItem)getElement()).getChildItems(option);
 	}
 	
 	@Override

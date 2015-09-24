@@ -8,6 +8,7 @@ import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.model.CTContainer;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.listener.CTContainerListener;
 
 public abstract class CTContainerCtrl extends AbstractCtrl implements CTContainerListener {
@@ -16,7 +17,7 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 		super(element);
 	}
 	
-	protected abstract List<CTItem> getChildItems(boolean checkCollapsed);
+	protected abstract List<CTItem> getChildItems(ChildItemSelectOptions option);
 	
 	@Override
 	protected void applyElement2Figure(CTElement element, CTElementFigure figure) {
@@ -41,6 +42,6 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 
 	@Override
 	public void modelRemoved(CTItem item) {
-		// TODO Auto-generated method stub
+		getRootCtrl().removeChildWithVisual(item);
 	}
 }

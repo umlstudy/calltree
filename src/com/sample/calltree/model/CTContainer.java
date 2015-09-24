@@ -11,6 +11,12 @@ import com.sample.calltree.model.listener.CTContainerListener;
 
 public class CTContainer extends CTElement {
 
+	public static enum ChildItemSelectOptions {
+		All
+		,VisibleOnly
+		,InvisibleOnly
+	};
+	
 	private List<CTItem> childItems;
 	
 	private Color backgroundColor;
@@ -22,11 +28,35 @@ public class CTContainer extends CTElement {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CTItem> getChildItems(boolean checkCollapsed) {
-		if ( childItems == null || (checkCollapsed && isCollapsed ) ) {
+	public List<CTItem> getChildItems(ChildItemSelectOptions option) {
+		if ( childItems == null ) {
 			return Collections.EMPTY_LIST;
 		}
-		return childItems;
+		
+		List<CTItem> rslt = null;
+		switch ( option ) {
+		case All :
+			rslt = childItems;
+			break;
+		case VisibleOnly :
+			rslt = new ArrayList<CTItem>();
+			for ( CTItem item : childItems ) {
+				if ( item.isVisible() ) {
+					rslt.add(item);
+				}
+			}
+			break;
+		case InvisibleOnly :
+			rslt = new ArrayList<CTItem>();
+			for ( CTItem item : childItems ) {
+				if ( !item.isVisible() ) {
+					rslt.add(item);
+				}
+			}
+			break;
+		}
+		
+		return rslt;
 	}
 	
 	public boolean addChild(CTItem item) {
@@ -84,6 +114,13 @@ public class CTContainer extends CTElement {
 
 	public void toggleCollapsed() {
 		setCollapsed(!isCollapsed());
+		for ( CTItem child : getChildItems(ChildItemSelectOptions.All) ) {
+			child.setVisible(isCollapsed() ? false : true);
+			// 불일치 하는 아이템만 일치시킴
+			if ( child.isCollapsed() != isCollapsed ) {
+				child.setCollapsed(isCollapsed());
+			}
+		}
 	}
 
 	public boolean isCollapsed() {

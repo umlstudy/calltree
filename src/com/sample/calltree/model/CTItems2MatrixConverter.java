@@ -3,6 +3,8 @@ package com.sample.calltree.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
+
 public class CTItems2MatrixConverter {
 	
 	public static CTItem[][] convert(List<CTItem> ctItems) {
@@ -44,8 +46,9 @@ public class CTItems2MatrixConverter {
 			// column
 			rowDatas.add(item);
 			
-			if ( item.getChildItems(true).size() > 0 ) {
-				convert(colDatas, item.getChildItems(true), column+1);
+			List<CTItem> visibleChildItems = item.getChildItems(ChildItemSelectOptions.VisibleOnly);
+			if ( visibleChildItems.size() > 0 ) {
+				convert(colDatas, visibleChildItems, column+1);
 			}
 		}
 	}

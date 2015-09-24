@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Menu;
 
 import com.sample.calltree.ctrl.CtrlFactory;
 import com.sample.calltree.model.CTContainer;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
@@ -99,7 +100,7 @@ public class CallTreeMain extends ApplicationWindow {
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
 		if ( randomPos == 0 ) return cont;
 		
-		for ( CTElement ele : cont.getChildItems(true) ) {
+		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
 			curPos ++;
 			if ( randomPos == curPos ) return ele;
 			if ( ele instanceof CTContainer ) {
@@ -116,8 +117,8 @@ public class CallTreeMain extends ApplicationWindow {
 	}
 
 	private int getItemCnt(CTContainer cont) {
-		int cnt = cont.getChildItems(true).size();
-		for ( CTElement ele : cont.getChildItems(true) ) {
+		int cnt = cont.getChildItems(ChildItemSelectOptions.All).size();
+		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
 			if ( ele instanceof CTContainer ) {
 				CTContainer ctc = (CTContainer)ele;
 				cnt += getItemCnt(ctc);

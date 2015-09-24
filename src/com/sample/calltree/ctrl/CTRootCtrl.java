@@ -9,6 +9,8 @@ import org.eclipse.draw2d.IFigure;
 import com.sample.calltree.figure.CTElementFigure;
 import com.sample.calltree.figure.CTRootFigure;
 import com.sample.calltree.model.CTConnection;
+import com.sample.calltree.model.CTContainer;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
@@ -41,8 +43,8 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 
 	@Override
-	protected List<CTItem> getChildItems(boolean checkCollapsed) {
-		return getRoot().getChildItems(checkCollapsed);
+	protected List<CTItem> getChildItems(ChildItemSelectOptions option) {
+		return getRoot().getChildItems(option);
 	}
 	
 	protected CallTreeCanvas getCallTreeCanvas() {
@@ -97,8 +99,10 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	
 	public void refresh() {
 		super.refresh();
-		refreshConnections();
 		refreshChildren();
+		refreshConnections();
+		// TODO 
+		getCallTreeCanvas().update();
 	}
 	
 	private void refreshConnections() {
@@ -113,6 +117,18 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		addConnectionWithVisual(conn, -1);
 	}
 	
+	protected void removeConnectionWithVisual(CTConnection conn) {
+		if ( getConnCtrls() == null ) {
+			setConnCtrls(new ListOrderedMap());
+		}
+		
+		CTConnectionCtrl connCtrl = (CTConnectionCtrl)getConnCtrls().get(conn);
+		if ( connCtrl != null ) {
+			removeConnectionVisual(connCtrl);
+			removeConnectionCtrl(conn);
+		}
+	}
+	
 	private void addConnectionWithVisual(CTConnection conn, int index) {
 		if ( getConnCtrls() == null ) {
 			setConnCtrls(new ListOrderedMap());
@@ -120,14 +136,20 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		
 		CTConnectionCtrl connCtrl = (CTConnectionCtrl)getConnCtrls().get(conn);
 		if ( connCtrl == null ) {
-			connCtrl = (CTConnectionCtrl)createCtrl(conn);
-			addConnection(conn, connCtrl, index);
+			if ( conn.getSource().isVisible() && conn.getTarget().isVisible() ) {
+				connCtrl = (CTConnectionCtrl)createCtrl(conn);
+				addConnectionCtrl(conn, connCtrl, index);
+			}
 		}
 		
-		addConnectionVisual(connCtrl, index);
+		if ( !(conn.getSource().isVisible() && conn.getTarget().isVisible()) ) {
+			removeConnectionWithVisual(conn);
+		} else {
+			addConnectionVisual(connCtrl, index);
+		}
 	}
 
-	private void addConnection(CTConnection conn, CTConnectionCtrl connCtrl, int index) {
+	private void addConnectionCtrl(CTConnection conn, CTConnectionCtrl connCtrl, int index) {
 		if ( getConnCtrls() == null ) {
 			setConnCtrls(new ListOrderedMap());
 		}
@@ -138,9 +160,21 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		}
 	}
 
+	private CTConnectionCtrl removeConnectionCtrl(CTConnection conn) {
+		if ( getConnCtrls() == null ) {
+			setConnCtrls(new ListOrderedMap());
+		}
+		return (CTConnectionCtrl)getConnCtrls().remove(conn);
+	}
+
 	private void addConnectionVisual(CTConnectionCtrl connCtrl, int index) {
 		IFigure connFigure = connCtrl.getFigure();
 		getConnectionLayer().add(connFigure, index);
+	}
+	
+	private void removeConnectionVisual(CTConnectionCtrl connCtrl) {
+		IFigure connFigure = connCtrl.getFigure();
+		getConnectionLayer().remove(connFigure);
 	}
 
 	@Override
@@ -150,7 +184,7 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 
 	@Override
 	public void connRemoved(CTConnection conn) {
-		// TODO Auto-generated method stub
+		removeConnectionWithVisual(conn);
 	}
 //	
 //	public void updateSizeLocation() {
@@ -205,15 +239,33 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 	}
 	
 	public void refreshChildren() {
-		List<CTItem> items = getChildItems(true);
+		refreshChildren(getRoot());
+	}
+	
+	private void refreshChildren(CTContainer container) {
+		List<CTItem> items = container.getChildItems(ChildItemSelectOptions.All);
 		for (int i=0;i<items.size(); i++ ) {
 			CTItem item = items.get(i);
-			addChildWithVisual(item, i);
+			//addChildWithVisual(item, i);
+			addChildWithVisual(item);
+			refreshChildren(item);
 		}
 	}
 	
 	protected void addChildWithVisual(CTItem item) {
 		addChildWithVisual(item, -1);
+	}
+
+	protected void removeChildWithVisual(CTItem item) {
+		if ( getChildCtrls() == null ) {
+			setChildCtrls(new ListOrderedMap());
+		}
+		AbstractCtrl childCtrl = (AbstractCtrl)getChildCtrls().get(item);
+		
+		if ( childCtrl != null ) {
+			removeChildVisual(childCtrl);
+			removeChildCtrl(item);
+		}
 	}
 	
 	private void addChildWithVisual(CTItem item, int index) {
@@ -223,14 +275,41 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		
 		AbstractCtrl childCtrl = (AbstractCtrl)getChildCtrls().get(item);
 		if ( childCtrl == null ) {
-			childCtrl = createCtrl(item);
-			addChild(item, childCtrl, index);
+			if ( item.isVisible() ) {
+				childCtrl = createCtrl(item);
+				addChildCtrl(item, childCtrl, index);
+			}
 		}
-		
-		addChildVisual(childCtrl, index);
+
+		if ( !item.isVisible() ) {
+			removeChildWithVisual(item);
+		} else {
+			addChildVisual(childCtrl, index);
+		}
+	}
+	
+	/////////////////////////////////////////////////
+	// CTRLS
+	//
+	/**
+	 * removeChildCtrl
+	 * @param item
+	 * @return
+	 */
+	private AbstractCtrl removeChildCtrl(CTItem item) {
+		if ( getChildCtrls() == null ) {
+			setChildCtrls(new ListOrderedMap());
+		}
+		return (AbstractCtrl) getChildCtrls().remove(item);
 	}
 
-	private void addChild(CTItem item, AbstractCtrl childCtrl, int index) {
+	/**
+	 * addChildCtrl
+	 * @param item
+	 * @param childCtrl
+	 * @param index
+	 */
+	private void addChildCtrl(CTItem item, AbstractCtrl childCtrl, int index) {
 		if ( getChildCtrls() == null ) {
 			setChildCtrls(new ListOrderedMap());
 		}
@@ -241,6 +320,23 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		}
 	}
 	
+	/////////////////////////////////////////////////
+	// VISUALS
+	//
+	/**
+	 * removeChildVisual
+	 * @param childCtrl
+	 */
+	private void removeChildVisual(AbstractCtrl childCtrl) {
+		IFigure childFigure = childCtrl.getFigure();
+		getFigure().remove(childFigure);
+	}
+	
+	/**
+	 * addChildVisual
+	 * @param childCtrl
+	 * @param index
+	 */
 	private void addChildVisual(AbstractCtrl childCtrl, int index) {
 		IFigure childFigure = childCtrl.getFigure();
 		getFigure().add(childFigure, index);
