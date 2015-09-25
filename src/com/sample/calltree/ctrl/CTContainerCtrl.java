@@ -31,8 +31,8 @@ public abstract class CTContainerCtrl extends AbstractCtrl implements CTContaine
 		return ctrl;
 	}
 	
-	public void refresh() {
-		super.refresh();
+	public void applyElement2FigureAndUpateFigure() {
+		super.applyElement2FigureAndUpateFigure();
 	}
 	
 	@Override

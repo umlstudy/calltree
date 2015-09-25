@@ -93,7 +93,7 @@ public class CallTreeMain extends ApplicationWindow {
 			ctItem1.setDimension(new Dimension(170, 10));
 			container.addChild(ctItem1);
 		}
-		ctRoot.update();
+		ctRoot.arrangeChildSizeLocations();
 		tv.refresh();
 	}
 

@@ -15,7 +15,7 @@ import com.sample.calltree.model.CTItem;
 
 public abstract class CTItemEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
 
-	private Point location;
+	private Point mousePosition;
 
 	public CTItemEventHandler(CTElement element) {
 		super(element);
@@ -24,48 +24,106 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 	}
 
 	public void mousePressed(MouseEvent event) {
-		location = event.getLocation();
+		mousePosition = event.getLocation();
 		event.consume();
 	}
-
+	
 	public void mouseDragged(MouseEvent event) {
-		if (location == null) {
+		if (mousePosition == null) {
 			return;
 		}
-		Point newLocation = event.getLocation();
-		if (newLocation == null) {
+		Point newMousePosition = event.getLocation();
+		if (newMousePosition == null) {
 			return;
 		}
-		Dimension offset = newLocation.getDifference(location);
-		if (offset.width == 0 && offset.height == 0) {
+		Dimension diff = newMousePosition.getDifference(mousePosition);
+		if (diff.width == 0 && diff.height == 0) {
 			return;
 		}
-		location = newLocation;
-
-		UpdateManager updateMgr = getFigure().getUpdateManager();
-		LayoutManager layoutMgr = getFigure().getParent().getLayoutManager();
-		if ( layoutMgr == null ) {
-			return;
-		}
+		mousePosition = newMousePosition;
 		
-		Rectangle bounds = getFigure().getBounds();
-		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
-		
-		// Copy the rectangle using getCopy() to prevent undesired side-effects
-		bounds = bounds.getCopy().translate(offset.width, offset.height);
-		layoutMgr.setConstraint(getFigure(), bounds);
-		getFigure().translate(offset.width, offset.height);
-		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
-		event.consume();
-		
-		((CTItem)getElement()).setBounds(bounds);
+		// apply translate value to model and update figure
+		CTItem ctItem = getCTItem();
+		Point modelLocation = ctItem.getLocation();
+		modelLocation.translate(diff);
+		applyElement2FigureAndUpateFigure();
 	}
+	
+	private CTItem getCTItem() {
+		return (CTItem)getElement();
+	}
+
+//	public void mouseDragged(MouseEvent event) {
+//		if (mousePosition == null) {
+//			return;
+//		}
+//		Point newMousePosition = event.getLocation();
+//		if (newMousePosition == null) {
+//			return;
+//		}
+//		Dimension offset = newMousePosition.getDifference(mousePosition);
+//		if (offset.width == 0 && offset.height == 0) {
+//			return;
+//		}
+//		mousePosition = newMousePosition;
+//
+//		UpdateManager updateMgr = getFigure().getUpdateManager();
+//		LayoutManager layoutMgr = getFigure().getParent().getLayoutManager();
+//		if ( layoutMgr == null ) {
+//			return;
+//		}
+//		
+//		Rectangle bounds = getFigure().getBounds();
+//		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
+//		
+//		// Copy the rectangle using getCopy() to prevent undesired side-effects
+//		bounds = bounds.getCopy().translate(offset.width, offset.height);
+//		layoutMgr.setConstraint(getFigure(), bounds);
+//		getFigure().translate(offset.width, offset.height);
+//		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
+//		event.consume();
+//		
+//		((CTItem)getElement()).setBounds(bounds);
+//	}
+
+//	public void mouseDragged(MouseEvent event) {
+//		if (location == null) {
+//			return;
+//		}
+//		Point newLocation = event.getLocation();
+//		if (newLocation == null) {
+//			return;
+//		}
+//		Dimension offset = newLocation.getDifference(location);
+//		if (offset.width == 0 && offset.height == 0) {
+//			return;
+//		}
+//		location = newLocation;
+//
+//		UpdateManager updateMgr = getFigure().getUpdateManager();
+//		LayoutManager layoutMgr = getFigure().getParent().getLayoutManager();
+//		if ( layoutMgr == null ) {
+//			return;
+//		}
+//		
+//		Rectangle bounds = getFigure().getBounds();
+//		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
+//		
+//		// Copy the rectangle using getCopy() to prevent undesired side-effects
+//		bounds = bounds.getCopy().translate(offset.width, offset.height);
+//		layoutMgr.setConstraint(getFigure(), bounds);
+//		getFigure().translate(offset.width, offset.height);
+//		updateMgr.addDirtyRegion(getFigure().getParent(), bounds);
+//		event.consume();
+//		
+//		((CTItem)getElement()).setBounds(bounds);
+//	}
 
 	public void mouseReleased(MouseEvent event) {
-		if (location == null) {
+		if (mousePosition == null) {
 			return;
 		}
-		location = null;
+		mousePosition = null;
 		event.consume();
 	}
 
@@ -75,7 +133,7 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 	public void mouseDoubleClicked(MouseEvent event) {
 		CTItem ctItem = (CTItem)getElement();
 		ctItem.toggleCollapsed();
-		ctItem.getRoot().update();
+		ctItem.getRoot().arrangeChildSizeLocations();
 		ctItem.getRoot().fireModelUpdated();
 	}
 

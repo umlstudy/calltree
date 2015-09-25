@@ -43,10 +43,10 @@ public class CTRoot extends CTContainer {
 	private static final int ITEM_WIDTH = 120;
 	private static final int ITEM_HEIGHT = 30;
 	
-	public void update() {
-		updateSizeAndLocation();
-//		updateConnection();
-	}
+//	public void arrangeChildSizeLocations() {
+//		updateSizeAndLocation();
+////		updateConnection();
+//	}
 	
 //	private void updateConnection() {
 //		updateConnection(null, getChildItems());
@@ -70,7 +70,7 @@ public class CTRoot extends CTContainer {
 //		}
 //	}
 
-	private void updateSizeAndLocation() {
+	public void arrangeChildSizeLocations() {
 		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems(ChildItemSelectOptions.VisibleOnly));
 		ctItems2Matrix = CTItems2MatrixConverter.verticalCenter(ctItems2Matrix);
 		
@@ -94,23 +94,23 @@ public class CTRoot extends CTContainer {
 			for ( int row=0;row<ctItems2Matrix[col].length; row++ ) {
 				if ( ctItems2Matrix[col][row] != null ) {
 					CTItem item = ctItems2Matrix[col][row];
-					boolean updated = false;
+					boolean sizeOrLocationChanged = false;
 					
-					// X
+					// location
 					Point oldLoc = item.getLocation();
 					if ( curX != oldLoc.x || curY != oldLoc.y ) {
 						item.setLocation(new Point(curX, curY));
-						updated = true;
+						sizeOrLocationChanged = true;
 					}
 					
-					// Y
+					// size
 					Dimension oldSize = item.getDimension();
 					if ( ITEM_WIDTH != oldSize.width || ITEM_HEIGHT != oldSize.height ) {
 						item.setDimension(new Dimension(ITEM_WIDTH, ITEM_HEIGHT));
-						updated = true;
+						sizeOrLocationChanged = true;
 					}
 					
-					if ( updated ) {
+					if ( sizeOrLocationChanged ) {
 						item.setAllowFiringModelUpdate(true);
 						item.fireModelUpdated();
 					}

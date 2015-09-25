@@ -27,6 +27,11 @@ public abstract class CTElement {
 		this.name = name;
 	}
 	
+	/**
+	 * model 은 controller 를 호출함 
+	 * ( controller 모델에 updateLister로 등록되어 있음 )
+	 * controller 는 model 의 내용을 figure 에 반영하고 figure 를 refresh 함
+	 */
 	public void fireModelUpdated() {
 		if( allowFiringModelUpdate() && getModelUpdateListener() != null ) {
 			getModelUpdateListener().modelUpdated();
@@ -40,6 +45,10 @@ public abstract class CTElement {
 	public void setModelUpdateListener(CTElementUpdateListener modelUpdateListener) {
 		Assert.isTrue(this.modelUpdateListener == null, "this.modelUpdateListener != null");
 		this.modelUpdateListener = modelUpdateListener;
+	}
+	
+	public void removeModelUpdateListener() {
+		this.modelUpdateListener = null;
 	}
 
 	public boolean allowFiringModelUpdate() {

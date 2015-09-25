@@ -68,11 +68,11 @@ public abstract class AbstractCtrl implements CTElementUpdateListener {
 		} while ( true );
 	}
 
-	public void refresh() {
+	public void applyElement2FigureAndUpateFigure() {
 	}
 	
 	@Override
 	public void modelUpdated() {
-		refresh();
+		applyElement2FigureAndUpateFigure();
 	}
 }

@@ -15,7 +15,7 @@ public class AddAction extends Action {
 	private StructuredViewer viewer;
 	
 	public AddAction(CTItem selected, StructuredViewer viewer) {
-		super();
+		super("add item");
 		this.selected = selected;
 		this.viewer = viewer;
 	}
@@ -33,7 +33,7 @@ public class AddAction extends Action {
 		item.setDimension(new Dimension(w,h));
 		selected.setAllowFiringModelUpdate(true);
 		selected.addChild(item);
-		selected.getRoot().update();
+		selected.getRoot().arrangeChildSizeLocations();
 		viewer.refresh();
 	}
 }

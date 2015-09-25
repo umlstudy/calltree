@@ -97,12 +97,12 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		this.connCtrls = connectionCtrls;
 	}
 	
-	public void refresh() {
-		super.refresh();
+	public void applyElement2FigureAndUpateFigure() {
+		super.applyElement2FigureAndUpateFigure();
 		refreshChildren();
 		refreshConnections();
 		// TODO 
-		getCallTreeCanvas().update();
+		//getCallTreeCanvas().update();
 	}
 	
 	private void refreshConnections() {
@@ -139,13 +139,12 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 			if ( conn.getSource().isVisible() && conn.getTarget().isVisible() ) {
 				connCtrl = (CTConnectionCtrl)createCtrl(conn);
 				addConnectionCtrl(conn, connCtrl, index);
+				addConnectionVisual(connCtrl, index);
 			}
 		}
 		
 		if ( !(conn.getSource().isVisible() && conn.getTarget().isVisible()) ) {
 			removeConnectionWithVisual(conn);
-		} else {
-			addConnectionVisual(connCtrl, index);
 		}
 	}
 
@@ -164,6 +163,7 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		if ( getConnCtrls() == null ) {
 			setConnCtrls(new ListOrderedMap());
 		}
+		conn.removeModelUpdateListener();
 		return (CTConnectionCtrl)getConnCtrls().remove(conn);
 	}
 
@@ -278,13 +278,12 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 			if ( item.isVisible() ) {
 				childCtrl = createCtrl(item);
 				addChildCtrl(item, childCtrl, index);
+				addChildVisual(childCtrl, index);
 			}
 		}
 
 		if ( !item.isVisible() ) {
 			removeChildWithVisual(item);
-		} else {
-			addChildVisual(childCtrl, index);
 		}
 	}
 	
@@ -300,6 +299,7 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		if ( getChildCtrls() == null ) {
 			setChildCtrls(new ListOrderedMap());
 		}
+		item.removeModelUpdateListener();
 		return (AbstractCtrl) getChildCtrls().remove(item);
 	}
 
