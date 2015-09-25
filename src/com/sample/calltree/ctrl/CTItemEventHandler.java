@@ -1,21 +1,24 @@
 package com.sample.calltree.ctrl;
 
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
-import org.eclipse.draw2d.UpdateManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.graphics.Color;
 
+import com.sample.calltree.model.CTContainer;
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 
 public abstract class CTItemEventHandler extends CTContainerCtrl implements MouseListener, MouseMotionListener {
 
 	private Point mousePosition;
+	private Color savedBackgroundColor;
 
 	public CTItemEventHandler(CTElement element) {
 		super(element);
@@ -139,16 +142,53 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 
 	public void mouseEntered(MouseEvent event) {
 		CTItem ctItem = (CTItem)getElement();
-		ctItem.setBackgroundColor(ColorConstants.lightGray);
+		savedBackgroundColor = ctItem.getBackgroundColor();
+		ctItem.setBackgroundColor(ColorConstants.red);
 		ctItem.setAllowFiringModelUpdate(true);
 		ctItem.fireModelUpdated();
+		
+		setParent(ctItem, ColorConstants.red);
+		setChildrens(ctItem, ColorConstants.red);
+	}
+
+	private void setChildrens(CTContainer element, Color background) {
+		List<CTItem> childItems = element.getChildItems(ChildItemSelectOptions.All);
+		
+		if ( childItems.size() > 0 ) {
+			for ( CTItem item : childItems ) {
+				item.setBackgroundColor(background);
+				item.setAllowFiringModelUpdate(true);
+				item.fireModelUpdated();
+				
+				setChildrens(item, background);
+			}
+		}
+	}
+
+	private void setParent(CTElement element, Color background) {
+		if ( element.getOwner() != null ) {
+			element = element.getOwner();
+			if ( element instanceof CTContainer ) {
+				CTContainer cont = (CTContainer)element;
+				cont.setBackgroundColor(background);
+				cont.setAllowFiringModelUpdate(true);
+				cont.fireModelUpdated();
+			}
+			setParent(element, background);
+		}
 	}
 
 	public void mouseExited(MouseEvent event) {
 		CTItem ctItem = (CTItem)getElement();
-		ctItem.setBackgroundColor(ColorConstants.lightBlue);
+		if ( savedBackgroundColor == null ) {
+			savedBackgroundColor = ColorConstants.lightBlue;
+		}
+		ctItem.setBackgroundColor(savedBackgroundColor);
 		ctItem.setAllowFiringModelUpdate(true);
 		ctItem.fireModelUpdated();
+		
+		setParent(ctItem, savedBackgroundColor);
+		setChildrens(ctItem, savedBackgroundColor);
 	}
 
 	public void mouseHover(MouseEvent event) {
