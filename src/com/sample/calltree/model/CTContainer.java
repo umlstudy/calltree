@@ -25,6 +25,7 @@ public class CTContainer extends CTElement {
 
 	public CTContainer(String name) {
 		super(name);
+		setCollapsed(false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -114,12 +115,18 @@ public class CTContainer extends CTElement {
 
 	public void toggleCollapsed() {
 		setCollapsed(!isCollapsed());
-		for ( CTItem child : getChildItems(ChildItemSelectOptions.All) ) {
+		childsVisibleAndToggleCollapsed(getChildItems(ChildItemSelectOptions.All));
+	}
+	
+	private void childsVisibleAndToggleCollapsed(List<CTItem> childs) {
+		for ( CTItem child : childs ) {
 			child.setVisible(isCollapsed() ? false : true);
 			// 불일치 하는 아이템만 일치시킴
 			if ( child.isCollapsed() != isCollapsed ) {
 				child.setCollapsed(isCollapsed());
 			}
+			
+			childsVisibleAndToggleCollapsed(child.getChildItems(ChildItemSelectOptions.All));
 		}
 	}
 
