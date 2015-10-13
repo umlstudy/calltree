@@ -1,5 +1,6 @@
 package test;
 
+import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTItems2MatrixConverter;
 import com.sample.calltree.model.CTRoot;
@@ -23,7 +24,7 @@ public class Object2Matrix {
 		ctroot.addChild(item1);
 		ctroot.addChild(item2);
 		
-		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(ctroot.getChildItems());
+		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(ctroot.getChildItems(ChildItemSelectOptions.All));
 		
 		for ( int row=0;row<ctItems2Matrix[0].length; row++ ) {
 			for ( int col=0;col<ctItems2Matrix.length; col++ ) {
