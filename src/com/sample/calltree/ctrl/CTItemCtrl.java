@@ -57,10 +57,12 @@ public class CTItemCtrl extends CTItemEventHandler {
 	}
 
 	public IFigure getSourceEndPoingFigure() {
-		return getFigure().getLeftEndPointFigure();
+//		return getFigure().getLeftEndPointFigure();
+		return getFigure().getTopEndPointFigure();
 	}
 
 	public IFigure getTargetEndPoingFigure() {
-		return getFigure().getRightEndPointFigure();
+//		return getFigure().getRightEndPointFigure();
+		return getFigure().getBottomEndPointFigure();
 	}
 }

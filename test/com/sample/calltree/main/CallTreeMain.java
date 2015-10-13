@@ -81,8 +81,8 @@ public class CallTreeMain extends ApplicationWindow {
 	}
 
 	protected void appStarted() {
-		// 임의의 샘플 데이터를 30개 생성함
-		for ( int i=0; i<30; i++ ) {
+		// 임의의 샘플 데이터를 50개 생성함
+		for ( int i=0; i<50; i++ ) {
 			int itemCnt = getItemCnt(ctRoot) + 1;
 			Random r = new Random();
 			int randomPos = r.nextInt(itemCnt);

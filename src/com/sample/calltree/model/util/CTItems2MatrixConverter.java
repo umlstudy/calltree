@@ -1,8 +1,9 @@
-package com.sample.calltree.model;
+package com.sample.calltree.model.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 
 public class CTItems2MatrixConverter {
@@ -28,7 +29,7 @@ public class CTItems2MatrixConverter {
 			}	
 		}
 		
-		return matrix;
+		return verticalCenter(matrix);
 		
 	}
 
@@ -53,7 +54,7 @@ public class CTItems2MatrixConverter {
 		}
 	}
 
-	public static CTItem[][] verticalCenter(CTItem[][] ctItems2Matrix) {
+	private static CTItem[][] verticalCenter(CTItem[][] ctItems2Matrix) {
 		CTItem[][] rslt = new CTItem[ctItems2Matrix.length][];
 		for ( int column = 0; column<ctItems2Matrix.length; column++ ) {
 			int rowCount = ctItems2Matrix[column].length;

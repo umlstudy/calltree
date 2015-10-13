@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
-
 import com.sample.calltree.model.listener.CTRootListener;
+import com.sample.calltree.model.util.CTItemPositioner;
 
 public class CTRoot extends CTContainer {
 
@@ -40,9 +38,9 @@ public class CTRoot extends CTContainer {
 		return rslt;
 	}
 	
-	private static final int ITEM_WIDTH = 120;
-	private static final int ITEM_HEIGHT = 30;
-	
+//	private static final int ITEM_WIDTH = 120;
+//	private static final int ITEM_HEIGHT = 30;
+//	
 //	public void arrangeChildSizeLocations() {
 //		updateSizeAndLocation();
 ////		updateConnection();
@@ -69,56 +67,116 @@ public class CTRoot extends CTContainer {
 //			}
 //		}
 //	}
-
+	
 	public void arrangeChildSizeLocations() {
-		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems(ChildItemSelectOptions.VisibleOnly));
-		ctItems2Matrix = CTItems2MatrixConverter.verticalCenter(ctItems2Matrix);
-		
-		//
-		int maxRowCnt = 0;
-		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
-			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
-			maxRowCnt = maxRowCnt > curRowCnt ? maxRowCnt : curRowCnt;
-		}
-		int curX = 0;
-		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
-			int curY = 0;
-			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
-			if ( curRowCnt < maxRowCnt ) {
-				if ( (maxRowCnt % 2) != (curRowCnt % 2) ) {
-//					curY  = (curRowCnt % 2) == 1 ? 20 : 0;
-					curY = 20;
-				}
-//				curY *= (maxRowCnt % 2) == 0 ? -1 : 1;
-			}
-			for ( int row=0;row<ctItems2Matrix[col].length; row++ ) {
-				if ( ctItems2Matrix[col][row] != null ) {
-					CTItem item = ctItems2Matrix[col][row];
-					boolean sizeOrLocationChanged = false;
-					
-					// location
-					Point oldLoc = item.getLocation();
-					if ( curX != oldLoc.x || curY != oldLoc.y ) {
-						item.setLocation(new Point(curX, curY));
-						sizeOrLocationChanged = true;
-					}
-					
-					// size
-					Dimension oldSize = item.getDimension();
-					if ( ITEM_WIDTH != oldSize.width || ITEM_HEIGHT != oldSize.height ) {
-						item.setDimension(new Dimension(ITEM_WIDTH, ITEM_HEIGHT));
-						sizeOrLocationChanged = true;
-					}
-					
-					if ( sizeOrLocationChanged ) {
-						item.setAllowFiringModelUpdate(true);
-						item.fireModelUpdated();
-					}
-				}
-				
-				curY += 40;
-			}
-			curX += 170;
-		}
+		// TODO
+		arrangeChildSizeLocations(false);
 	}
+	
+	private void arrangeChildSizeLocations(boolean horizontal) {
+		List<CTItem> childItems = getChildItems(ChildItemSelectOptions.VisibleOnly);
+		CTItemPositioner.arrangeChildSizeLocations(childItems, horizontal);
+	}
+	
+//	private void arrangeChildSizeLocationsVertical() {
+//		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems(ChildItemSelectOptions.VisibleOnly));
+//		
+//		//
+//		int maxRowCnt = 0;
+//		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+//			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+//			maxRowCnt = maxRowCnt > curRowCnt ? maxRowCnt : curRowCnt;
+//		}
+//		int curX = 0;
+//		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+//			int curY = 0;
+//			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+//			if ( curRowCnt < maxRowCnt ) {
+//				if ( (maxRowCnt % 2) != (curRowCnt % 2) ) {
+////					curY  = (curRowCnt % 2) == 1 ? 20 : 0;
+//					curY = 20;
+//				}
+////				curY *= (maxRowCnt % 2) == 0 ? -1 : 1;
+//			}
+//			for ( int row=0;row<ctItems2Matrix[col].length; row++ ) {
+//				if ( ctItems2Matrix[col][row] != null ) {
+//					CTItem item = ctItems2Matrix[col][row];
+//					boolean sizeOrLocationChanged = false;
+//					
+//					// location
+//					Point oldLoc = item.getLocation();
+//					if ( curX != oldLoc.x || curY != oldLoc.y ) {
+//						item.setLocation(new Point(curX, curY));
+//						sizeOrLocationChanged = true;
+//					}
+//					
+//					// size
+//					Dimension oldSize = item.getDimension();
+//					if ( ITEM_WIDTH != oldSize.width || ITEM_HEIGHT != oldSize.height ) {
+//						item.setDimension(new Dimension(ITEM_WIDTH, ITEM_HEIGHT));
+//						sizeOrLocationChanged = true;
+//					}
+//					
+//					if ( sizeOrLocationChanged ) {
+//						item.setAllowFiringModelUpdate(true);
+//						item.fireModelUpdated();
+//					}
+//				}
+//				
+//				curY += 40;
+//			}
+//			curX += 170;
+//		}
+//	}
+//
+//	private void arrangeChildSizeLocationsHorizontal() {
+//		CTItem[][] ctItems2Matrix = CTItems2MatrixConverter.convert(getChildItems(ChildItemSelectOptions.VisibleOnly));
+//
+//		//
+//		int maxRowCnt = 0;
+//		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+//			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+//			maxRowCnt = maxRowCnt > curRowCnt ? maxRowCnt : curRowCnt;
+//		}
+//		int curX = 0;
+//		for ( int col=0;col<ctItems2Matrix.length; col++ ) {
+//			int curY = 0;
+//			int curRowCnt = CTItems2MatrixConverter.getNotNullCount(ctItems2Matrix[col]);
+//			if ( curRowCnt < maxRowCnt ) {
+//				if ( (maxRowCnt % 2) != (curRowCnt % 2) ) {
+////					curY  = (curRowCnt % 2) == 1 ? 20 : 0;
+//					curY = 20;
+//				}
+////				curY *= (maxRowCnt % 2) == 0 ? -1 : 1;
+//			}
+//			for ( int row=0;row<ctItems2Matrix[col].length; row++ ) {
+//				if ( ctItems2Matrix[col][row] != null ) {
+//					CTItem item = ctItems2Matrix[col][row];
+//					boolean sizeOrLocationChanged = false;
+//					
+//					// location
+//					Point oldLoc = item.getLocation();
+//					if ( curX != oldLoc.x || curY != oldLoc.y ) {
+//						item.setLocation(new Point(curX, curY));
+//						sizeOrLocationChanged = true;
+//					}
+//					
+//					// size
+//					Dimension oldSize = item.getDimension();
+//					if ( ITEM_WIDTH != oldSize.width || ITEM_HEIGHT != oldSize.height ) {
+//						item.setDimension(new Dimension(ITEM_WIDTH, ITEM_HEIGHT));
+//						sizeOrLocationChanged = true;
+//					}
+//					
+//					if ( sizeOrLocationChanged ) {
+//						item.setAllowFiringModelUpdate(true);
+//						item.fireModelUpdated();
+//					}
+//				}
+//				
+//				curY += 40;
+//			}
+//			curX += 170;
+//		}
+//	}
 }
