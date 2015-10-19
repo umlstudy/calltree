@@ -1,4 +1,4 @@
-package com.sample.calltree.main;
+package com.sample.calltree.main.action;
 
 import java.util.Random;
 

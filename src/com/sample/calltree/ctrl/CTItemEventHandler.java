@@ -149,6 +149,9 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 		
 		setParent(ctItem, ColorConstants.red);
 		setChildrens(ctItem, ColorConstants.red);
+		
+		// FOR POPUPMENU
+		getRootCtrl().setMouseOverItem(this);
 	}
 
 	private void setChildrens(CTContainer element, Color background) {
@@ -189,6 +192,11 @@ public abstract class CTItemEventHandler extends CTContainerCtrl implements Mous
 		
 		setParent(ctItem, savedBackgroundColor);
 		setChildrens(ctItem, savedBackgroundColor);
+		
+		// FOR POPUPMENU
+		if ( getRootCtrl().getMouseOverItem() == this ) {
+			getRootCtrl().setMouseOverItem(null);
+		}
 	}
 
 	public void mouseHover(MouseEvent event) {

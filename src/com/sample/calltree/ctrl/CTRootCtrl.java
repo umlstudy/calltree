@@ -341,4 +341,15 @@ public class CTRootCtrl extends CTContainerCtrl implements CTRootListener {
 		IFigure childFigure = childCtrl.getFigure();
 		getFigure().add(childFigure, index);
 	}
+
+	/////////////////////////////////////////////////////////////
+	// FOR POPUPMENU
+	private CTContainerCtrl containerCtrl;
+	public void setMouseOverItem(CTContainerCtrl containerCtrl) {
+		this.containerCtrl = containerCtrl;
+	}
+	
+	public CTContainerCtrl getMouseOverItem() {
+		return containerCtrl;
+	}
 }

@@ -1,10 +1,13 @@
 package com.sample.calltree.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -19,15 +22,22 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
+import com.sample.calltree.ctrl.CTContainerCtrl;
+import com.sample.calltree.ctrl.CTItemCtrl;
 import com.sample.calltree.ctrl.CtrlFactory;
+import com.sample.calltree.main.action.AddAction;
+import com.sample.calltree.main.action.ConfirmAction;
+import com.sample.calltree.main.action.HoldAction;
+import com.sample.calltree.main.action.ReleaseAction;
 import com.sample.calltree.model.CTContainer;
 import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.ui.CallTreeCanvas;
+import com.sample.calltree.ui.PopupActionProvider;
 
-public class CallTreeMain extends ApplicationWindow {
+public class CallTreeMain extends ApplicationWindow implements PopupActionProvider {
 
 	private CallTreeViewer tv;
 	private CTRoot ctRoot;
@@ -59,7 +69,7 @@ public class CallTreeMain extends ApplicationWindow {
 		
 		ctRoot = createDummyCTRoot();
 		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
-		canvas.setContents(ctRoot);
+		canvas.setContents(ctRoot, this);
 		
 		ctRoot.setAllowFiringModelUpdate(true);
 		ctRoot.fireModelUpdated();
@@ -175,5 +185,22 @@ public class CallTreeMain extends ApplicationWindow {
 		ct.setBlockOnOpen(true);
 		ct.open();
 		Display.getCurrent().dispose();
+	}
+
+	@Override
+	public List<Action> getContextActions(CTContainerCtrl ctrl) {
+		List<Action> actions = new ArrayList<Action>();
+		if ( ctrl != null && ctrl.getElement() instanceof CTItem ) {
+			CTItem ctItem = (CTItem)ctrl.getElement();
+			
+			if ( ctItem.getOwner() instanceof CTRoot ) {
+				actions.add(new ConfirmAction(ctItem, tv));
+			} else {
+				actions.add(new HoldAction(ctItem, tv));
+				actions.add(new ReleaseAction(ctItem, tv));
+			}
+		}
+		
+		return actions;
 	}
 }
