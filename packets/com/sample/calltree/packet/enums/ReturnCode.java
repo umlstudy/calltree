@@ -12,6 +12,8 @@ public enum ReturnCode {
 	
 	private int codeValue;
 	
+	public static int LENGTH = 1;
+	
 	private ReturnCode(int value) {
 		this.setCodeValue(value);
 	}

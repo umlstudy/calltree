@@ -11,7 +11,7 @@ import java.net.Socket;
 public class SocketServer {
 
 	static ServerSocket serverSocket;
-	protected final static int port = 19999;
+	public final static int port = 19999;
 	static Socket socketConnection;
 
 	public static void main(String[] args) {

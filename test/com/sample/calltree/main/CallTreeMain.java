@@ -34,10 +34,12 @@ import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
 import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
+import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.socket.PacketHandler;
 import com.sample.calltree.ui.CallTreeCanvas;
 import com.sample.calltree.ui.PopupActionProvider;
 
-public class CallTreeMain extends ApplicationWindow implements PopupActionProvider {
+public class CallTreeMain extends ApplicationWindow implements PopupActionProvider, PacketHandler {
 
 	private CallTreeViewer tv;
 	private CTRoot ctRoot;
@@ -202,5 +204,11 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		}
 		
 		return actions;
+	}
+
+	@Override
+	public void handlePacket(Packet packet) {
+		// TODO Auto-generated method stub
+		
 	}
 }

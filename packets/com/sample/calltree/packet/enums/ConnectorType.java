@@ -4,6 +4,8 @@ public enum ConnectorType {
 	Client(10),
 	Agent(20);
 	
+	public static int LENGTH = 2;
+	
 	private int typeValue;
 	
 	private ConnectorType(int value) {

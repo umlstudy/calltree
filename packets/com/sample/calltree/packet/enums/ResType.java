@@ -13,6 +13,8 @@ public enum ResType {
 	
 	private int typeValue;
 	
+	public static int LENGTH = 2;
+	
 	private ResType(int value) {
 		this.setTypeValue(value);
 	}
