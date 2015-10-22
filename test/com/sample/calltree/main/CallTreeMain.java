@@ -1,8 +1,8 @@
 package com.sample.calltree.main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -11,6 +11,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -33,6 +34,10 @@ import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.JobList;
+import com.sample.calltree.packet.body.JobStatus;
+import com.sample.calltree.packet.enums.MessageId;
+import com.sample.calltree.packet.enums.ReturnCode;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
 import com.sample.calltree.packet.socket.SocketHandler;
 import com.sample.calltree.ui.CallTreeCanvas;
@@ -41,6 +46,7 @@ import com.sample.calltree.ui.PopupActionProvider;
 public class CallTreeMain extends ApplicationWindow implements PopupActionProvider, ReceviedPacketHandler {
 
 	private CallTreeViewer tv;
+	private CallTreeCanvas canvas ;
 	private CTRoot ctRoot;
 	private SocketHandler socketHandler;
 	
@@ -64,17 +70,17 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		Composite gvParent = new Composite(parent, SWT.NONE);
 		gvParent.setLayout(glFactory.numColumns(1).create());
 		gvParent.setLayoutData(gdFactory.grab(true, true).create());
-		CallTreeCanvas canvas = new CallTreeCanvas(gvParent);
+		canvas = new CallTreeCanvas(gvParent);
 		canvas.setLayoutData(gdFactory.grab(true, true).create());
 		//canvas.setBackground(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		canvas.setCtrlFactory(CtrlFactory.newInstance());
 		
-		ctRoot = createDummyCTRoot();
-		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
-		canvas.setContents(ctRoot, this);
-		
-		ctRoot.setAllowFiringModelUpdate(true);
-		ctRoot.fireModelUpdated();
+//		ctRoot = createDummyCTRoot();
+//		//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
+//		canvas.setContents(ctRoot, this);
+//		
+//		ctRoot.setAllowFiringModelUpdate(true);
+//		ctRoot.fireModelUpdated();
 		
 		getShell().addShellListener(new ShellAdapter() {
 			
@@ -87,31 +93,30 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 				}
 			}
 		});
-		tv.setInput(ctRoot);
 		
 		return parent;
 	}
 
 	protected void appStarted() {
-		// 임의의 샘플 데이터를 50개 생성함
-		for ( int i=0; i<50; i++ ) {
-			int itemCnt = getItemCnt(ctRoot) + 1;
-			Random r = new Random();
-			int randomPos = r.nextInt(itemCnt);
-			final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
-			final CTItem ctItem1 = new CTItem(String.format("%d", i));
-			ctItem1.setLocation(new Point(20,20));
-			ctItem1.setBackgroundColor(ColorConstants.lightBlue);
-			ctItem1.setDimension(new Dimension(170, 10));
-			container.addChild(ctItem1);
-		}
-		ctRoot.arrangeChildSizeLocations();
-		tv.refresh();
-//		try {
-//			socketHandler.send(Packet.createReqPacket(MessageId.REQ_JOBLIST, null));
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
+//		// 임의의 샘플 데이터를 50개 생성함
+//		for ( int i=0; i<50; i++ ) {
+//			int itemCnt = getItemCnt(ctRoot) + 1;
+//			Random r = new Random();
+//			int randomPos = r.nextInt(itemCnt);
+//			final CTContainer container = (CTContainer)getItem(ctRoot, randomPos, 0);
+//			final CTItem ctItem1 = new CTItem(String.format("%d", i));
+//			ctItem1.setLocation(new Point(20,20));
+//			ctItem1.setBackgroundColor(ColorConstants.lightBlue);
+//			ctItem1.setDimension(new Dimension(170, 10));
+//			container.addChild(ctItem1);
 //		}
+//		ctRoot.arrangeChildSizeLocations();
+//		tv.refresh();
+		try {
+			socketHandler.send(Packet.createReqPacket(MessageId.REQ_JOBLIST, null));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
@@ -214,15 +219,77 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	@Override
 	public void packetReceived(final Packet receivedPacket) {
 		
+		if ( receivedPacket.getReturnCode() == ReturnCode.FAIL ) {
+			final com.sample.calltree.packet.body.Error error = (com.sample.calltree.packet.body.Error)receivedPacket.getBody();
+			getParentShell().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.openInformation(getParentShell(), "확인", error.getErrorMsg());
+				}
+			});
+			return;
+		}
+		
 		switch ( receivedPacket.getMessageId() ) {
-		case REQ_LOGIN :
-			System.out.println("REQ_LOGIN");
+		case REQ_JOBLIST :
+			System.out.println("REQ_LOGIN Consuming...");
+			JobList jobList = JobList.createRandom();
+			ctRoot = createItems(jobList);
+			ctRoot.arrangeChildSizeLocations();
+
+			//gv.setRootEditPart((RootEditPart)CTEditPartFactory.createEditPart(ctRoot));
+			//getParentShell().getDisplay().asyncExec(new Runnable() {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					canvas.setContents(ctRoot, CallTreeMain.this);
+					ctRoot.setAllowFiringModelUpdate(true);
+					ctRoot.fireModelUpdated();
+					tv.setInput(ctRoot);
+				}
+			});
+			
 			break;
+		}
+	}
+
+	private CTRoot createItems(JobList jobList) {
+		CTRoot root = new CTRoot("root");
+		
+		JobStatus confirmJob = null;
+		for ( JobStatus js : jobList.getJobs() ) {
+			if ( js.getParentJobId() == null ) {
+				confirmJob = js;
+				break;
+			}
+		}
+		
+		CTItem confirmJobItem = new CTItem(confirmJob.getJobId());
+		confirmJobItem.setLocation(new Point(100,100));
+		confirmJobItem.setBackgroundColor(ColorConstants.green);
+		confirmJobItem.setDimension(new Dimension(70, 130));
+		root.addChild(confirmJobItem);
+		
+		generateItemTreeByParentJob(confirmJob, jobList, confirmJobItem);
+		
+		return root;
+	}
+
+	private void generateItemTreeByParentJob(JobStatus parentJob, JobList jobList, CTItem parentItem) {
+		for ( JobStatus childJs : jobList.getJobs() ) {
+			if ( parentJob.getJobId().equals(childJs.getParentJobId()) ) {
+				CTItem childJobItem = new CTItem(childJs.getJobId());
+				childJobItem.setLocation(new Point(100,100));
+				childJobItem.setBackgroundColor(ColorConstants.green);
+				childJobItem.setDimension(new Dimension(70, 130));
+				parentItem.addChild(childJobItem);
+				
+				generateItemTreeByParentJob(childJs, jobList, childJobItem);
+			}
 		}
 	}
 
 	public void setSocketHandler(SocketHandler socketHandler) {
 		this.socketHandler = socketHandler;
 	}
-	
 }

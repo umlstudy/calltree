@@ -7,6 +7,7 @@ import java.net.Socket;
 import org.apache.commons.io.IOUtils;
 
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.LoginRequest;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
 import com.sample.calltree.packet.socket.SocketHandler;
@@ -22,7 +23,9 @@ public class SocketServer {
 			System.out.println("ServerSocket Initialized");
 
 			while (true) {
+				System.out.println("Waiting for client...");
 				Socket clientSocket = serverSocket.accept();
+				System.out.println("Client accepted...");
 				SocketHandler socketHandler = null;
 				socketHandler = SocketHandler.newInstance(clientSocket);
 				final SocketHandler fSocketHandler = socketHandler;
@@ -33,6 +36,7 @@ public class SocketServer {
 					}
 				});
 				Thread socketThread = new Thread(socketHandler);
+				System.out.println("새로운 스레스 생성 및 소켓에 대한 통신 위임...");
 				socketThread.start();
 			}
 		} catch (Exception e) {
@@ -79,7 +83,11 @@ public class SocketServer {
 				Packet resPacket = Packet.errorResPacket(receivedPacket, 011, "로그인 ID 및 암호를 확인하세요.");
 				socketHandler.send(resPacket);
 			}
-					
+			break;
+		case REQ_JOBLIST :
+			JobList jobList = JobList.createRandom();
+			Packet resPacket = Packet.createResPacket(receivedPacket, jobList);
+			socketHandler.send(resPacket);
 			break;
 		}
 	}

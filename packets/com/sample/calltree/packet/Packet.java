@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 
 import com.google.gson.Gson;
 import com.sample.calltree.packet.body.Error;
+import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.LoginRequest;
 import com.sample.calltree.packet.enums.ConnectorType;
 import com.sample.calltree.packet.enums.MessageId;
@@ -93,20 +94,31 @@ public class Packet {
 		Packet packet = new Packet();
 
 		// 1.패킷랭스 무시
-		readInt(is, INT_PACKET_LENGTH);
+		int packetlen = readInt(is, INT_PACKET_LENGTH);
+		System.out.println("PACKETLEN:"+packetlen);
 		// 2.접속처구분
 		ConnectorType connType = ConnectorType.fromTypeValue(readInt(is, ConnectorType.LENGTH));
 		if ( connType != ConnectorType.Client ) {
 			throw new RuntimeException();
 		}
+		System.out.println("ConnectorType:"+connType);
+
 		// 3.응답구분
 		packet.setResType(ResType.fromTypeValue(readInt(is, ResType.LENGTH)));
+		System.out.println("ResType:"+packet.getResType());
+
 		// 4.메시지ID
 		packet.setMessageId(MessageId.fromIdValue(readInt(is, MessageId.LENGTH)));
+		System.out.println("MessageId:"+packet.getMessageId());
+		
 		// 5.성공실패
 		packet.setReturnCode(ReturnCode.fromCodeValue(readInt(is, ReturnCode.LENGTH)));
+		System.out.println("ReturnCode:"+packet.getReturnCode());
+
 		// 6.바디패킷크기
 		int bodyPacketLen = readInt(is, INT_PACKET_LENGTH);
+		System.out.println("bodyPacketLen:"+bodyPacketLen);
+
 		// 7.바디패킷
 		packet.setBody(null);
 		if ( bodyPacketLen > 0 ) {
@@ -119,6 +131,12 @@ public class Packet {
 				switch ( packet.getMessageId() ) {
 				case REQ_LOGIN :
 					body = GSON.fromJson(bodyString, LoginRequest.class);
+					break;
+				case REQ_JOBLIST :
+					body = GSON.fromJson(bodyString, JobList.class);
+					break;
+				default :
+					throw new RuntimeException();
 				}
 			}
 			packet.setBody(body);
