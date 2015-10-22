@@ -3,8 +3,10 @@ package com.sample.calltree.dialog;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.apache.commons.io.HexDump;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -18,8 +20,10 @@ import org.eclipse.swt.widgets.Text;
 
 import com.sample.calltree.main.CallTreeMain;
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.Error;
 import com.sample.calltree.packet.body.LoginRequest;
 import com.sample.calltree.packet.enums.MessageId;
+import com.sample.calltree.packet.enums.ReturnCode;
 import com.sample.calltree.packet.socket.SocketHandler;
 import com.sample.calltree.server.SocketServer;
 
@@ -77,30 +81,44 @@ public class UsernamePasswordDialog extends Dialog {
 		}
 	}
 	
-	public static void main(String...args) throws IOException {
+	public static void main(String...args) throws IOException, InterruptedException {
 		final Display display = new Display();
-		Shell shell = new Shell(display);
+		final Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		UsernamePasswordDialog upd = new UsernamePasswordDialog(shell);
 		upd.open();
-		display.dispose();
-
 		LoginRequest loginRequest = upd.getLoginRequest();
 		if ( loginRequest != null ) {
-			Socket clientSocket = new Socket("localhost", SocketServer.port);
+			Socket clientSocket = new Socket("localhost", SocketServer.PORT);
 			SocketHandler socketHandler = SocketHandler.newInstance(clientSocket);
 			socketHandler.send(Packet.createReqPacket(MessageId.REQ_LOGIN, loginRequest));
-			
-			CallTreeMain ct = new CallTreeMain();
-			socketHandler.setPacketHandler(ct);
-			Thread socketThread = new Thread(socketHandler);
-			socketThread.start();
-			ct.setBlockOnOpen(true);
-			ct.open();
-			Display.getCurrent().dispose();
-		}
-//		CallTreeMain.main(null);
 
+			System.out.println("패킷 수신 대기...");
+			Packet receivedPacket = socketHandler.receive();
+			System.out.println(receivedPacket.toString());
+			HexDump.dump(receivedPacket.getBytes(), 0, System.out, 0);
+			System.out.println("패킷 수신 완료...");
+			System.out.println("패킷 처리 시작...");
+			System.out.println("패킷 처리 종료...");
+			switch ( receivedPacket.getMessageId() ) {
+			case REQ_LOGIN :
+				if ( receivedPacket.getReturnCode() != ReturnCode.SUCCESS ) {
+					MessageDialog.openInformation(shell, "ERR", ((Error)receivedPacket.getBody()).getErrorMsg());
+				} else {
+					MessageDialog.openInformation(shell, "확인", "로그인에 성공했습니다.");
+
+					CallTreeMain ct = new CallTreeMain();
+					ct.setSocketHandler(socketHandler);
+					socketHandler.setPacketHandler(ct);
+					Thread socketThread = new Thread(socketHandler);
+					socketThread.start();
+					ct.setBlockOnOpen(true);
+					ct.open();
+				}
+			}
+		}
+		
+		display.dispose();
 		System.out.println("dispose!!!!!!!!!!!!!!");
 	}
 	

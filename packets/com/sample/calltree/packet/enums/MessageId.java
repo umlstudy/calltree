@@ -2,13 +2,15 @@ package com.sample.calltree.packet.enums;
 
 public enum MessageId {
 	REQ_LOGIN(1110),
+	REQ_JOBLIST(1120),
 	REQ_CONFIRM(1130),
 	REQ_JOBSTATUS(1140),
-	REQ_HOLD(1150);
+	REQ_HOLD(1150),
+	REQ_RELEASE(1160);
 	
 	private int idValue;
 	
-	public static int LENGTH = 2;
+	public static int LENGTH = 4;
 	
 	private MessageId(int value) {
 		this.setIdValue(value);

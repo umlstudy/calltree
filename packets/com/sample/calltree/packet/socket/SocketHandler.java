@@ -18,17 +18,19 @@ public class SocketHandler implements Closeable, Runnable {
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	private Socket socket;
-	private PacketHandler packetHandler;
+	private ReceviedPacketHandler receivedPacketHandler;
 	private IOException excepion;
 
-	private SocketHandler(Socket socket, PacketHandler packetHandler) throws IOException {
+	private SocketHandler(Socket socket, ReceviedPacketHandler packetHandler) throws IOException {
 		this.socket = socket;
 		this.setPacketHandler(packetHandler);
+//		inputStream = socket.getInputStream();
+//		outputStream = socket.getOutputStream();
 		inputStream = new BufferedInputStream(socket.getInputStream());
 		outputStream = new BufferedOutputStream(socket.getOutputStream());
 	}
 	
-	public static final SocketHandler newInstance(Socket socket, PacketHandler packetHandler) throws IOException {
+	public static final SocketHandler newInstance(Socket socket, ReceviedPacketHandler packetHandler) throws IOException {
 		return new SocketHandler(socket, packetHandler);
 	}
 	
@@ -43,27 +45,41 @@ public class SocketHandler implements Closeable, Runnable {
 	
 	public void send(Packet packet) throws IOException {
 		byte[] bytes = packet.getBytes();
+		System.out.println("패킷 전송 시작 : " + packet.getMessageId().toString() );
 		HexDump.dump(bytes, 0, System.out, 0);
 		outputStream.write(bytes);
 		outputStream.flush();
+		System.out.println("패킷 전송 종료 : " + packet.getMessageId().toString() );
 	}
 	
-	private Packet receive() throws IOException {
+	public Packet receive() throws IOException {
 		return Packet.receive(inputStream);
 	}
 	
 	@Override
 	public void run() {
-		Packet packet;
-		while ( true ) {
-			try {
-				packet = receive();
-				getPacketHandler().handlePacket(packet);
-			} catch (IOException e) {
-				e.printStackTrace();
-				this.excepion = e;
-				break;
+		try {
+			Packet packet;
+			while ( true ) {
+				try {
+					System.out.println("패킷 수신 대기...");
+					packet = receive();
+					System.out.println(packet.toString());
+					HexDump.dump(packet.getBytes(), 0, System.out, 0);
+					System.out.println("패킷 수신 완료...");
+					System.out.println("패킷 처리 시작...");
+					getReceivedPacketHandler().packetReceived(packet);
+					System.out.println("패킷 처리 종료...");
+				} catch (IOException e) {
+					e.printStackTrace();
+					this.excepion = e;
+					break;
+				} 
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(this);
 		}
 	}
 
@@ -71,11 +87,11 @@ public class SocketHandler implements Closeable, Runnable {
 		return excepion;
 	}
 
-	public PacketHandler getPacketHandler() {
-		return packetHandler;
+	private ReceviedPacketHandler getReceivedPacketHandler() {
+		return receivedPacketHandler;
 	}
 
-	public void setPacketHandler(PacketHandler packetHandler) {
-		this.packetHandler = packetHandler;
+	public void setPacketHandler(ReceviedPacketHandler receivedPacketHandler) {
+		this.receivedPacketHandler = receivedPacketHandler;
 	}
 }

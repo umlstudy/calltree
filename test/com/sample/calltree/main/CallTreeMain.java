@@ -23,9 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
 import com.sample.calltree.ctrl.CTContainerCtrl;
-import com.sample.calltree.ctrl.CTItemCtrl;
 import com.sample.calltree.ctrl.CtrlFactory;
-import com.sample.calltree.main.action.AddAction;
 import com.sample.calltree.main.action.ConfirmAction;
 import com.sample.calltree.main.action.HoldAction;
 import com.sample.calltree.main.action.ReleaseAction;
@@ -35,14 +33,16 @@ import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.packet.Packet;
-import com.sample.calltree.packet.socket.PacketHandler;
+import com.sample.calltree.packet.socket.ReceviedPacketHandler;
+import com.sample.calltree.packet.socket.SocketHandler;
 import com.sample.calltree.ui.CallTreeCanvas;
 import com.sample.calltree.ui.PopupActionProvider;
 
-public class CallTreeMain extends ApplicationWindow implements PopupActionProvider, PacketHandler {
+public class CallTreeMain extends ApplicationWindow implements PopupActionProvider, ReceviedPacketHandler {
 
 	private CallTreeViewer tv;
 	private CTRoot ctRoot;
+	private SocketHandler socketHandler;
 	
 	public CallTreeMain() {
 		super(null);
@@ -107,6 +107,11 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		}
 		ctRoot.arrangeChildSizeLocations();
 		tv.refresh();
+//		try {
+//			socketHandler.send(Packet.createReqPacket(MessageId.REQ_JOBLIST, null));
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 
 	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
@@ -207,8 +212,17 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	}
 
 	@Override
-	public void handlePacket(Packet packet) {
-		// TODO Auto-generated method stub
+	public void packetReceived(final Packet receivedPacket) {
 		
+		switch ( receivedPacket.getMessageId() ) {
+		case REQ_LOGIN :
+			System.out.println("REQ_LOGIN");
+			break;
+		}
 	}
+
+	public void setSocketHandler(SocketHandler socketHandler) {
+		this.socketHandler = socketHandler;
+	}
+	
 }
