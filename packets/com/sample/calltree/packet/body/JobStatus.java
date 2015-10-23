@@ -1,5 +1,6 @@
 package com.sample.calltree.packet.body;
 
+import com.sample.calltree.model.CTItem;
 import com.sample.calltree.packet.BodyPacketBase;
 import com.sample.calltree.packet.enums.JobStatusType;
 
@@ -9,6 +10,7 @@ public class JobStatus extends BodyPacketBase {
 	private String jobId;
 	private String parentJobId;
 	private JobStatusType jobStatusType;
+	private transient CTItem ctItem;
 	
 	public JobStatus(String resourceId, String jobId, String parentJobId, JobStatusType jobStatusType) {
 		setResourceId(resourceId);
@@ -51,7 +53,25 @@ public class JobStatus extends BodyPacketBase {
 		return jobStatusType;
 	}
 
-	private void setJobStatusType(JobStatusType jobStatusType) {
+	public void setJobStatusType(JobStatusType jobStatusType) {
 		this.jobStatusType = jobStatusType;
+		
+		if ( getCtItem() != null ) {
+			getCtItem().changeBackground();
+		}
+	}
+
+	public CTItem getCtItem() {
+		return ctItem;
+	}
+
+	public void setCtItem(CTItem ctItem) {
+		this.ctItem = ctItem;
+	}
+	
+	public void fireModelUpdated(){
+		if ( getCtItem() != null ) {
+			getCtItem().fireModelUpdated();
+		}
 	}
 }

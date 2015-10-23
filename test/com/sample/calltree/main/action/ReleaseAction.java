@@ -1,38 +1,34 @@
 package com.sample.calltree.main.action;
 
-import java.util.Random;
+import java.io.IOException;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.StructuredViewer;
 
 import com.sample.calltree.model.CTItem;
+import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.JobIdentifier;
+import com.sample.calltree.packet.body.JobStatus;
+import com.sample.calltree.packet.enums.MessageId;
+import com.sample.calltree.packet.socket.SocketHandler;
 
 public class ReleaseAction extends Action {
 	
-	private CTItem selected;
-	private StructuredViewer viewer;
+	private SocketHandler socketHandler ;
+	private CTItem item;
 	
-	public ReleaseAction(CTItem selected, StructuredViewer viewer) {
+	public ReleaseAction(SocketHandler socketHandler, CTItem item) {
 		super("홀드해제");
-		this.selected = selected;
-		this.viewer = viewer;
+		this.socketHandler = socketHandler;
+		this.item = item;
 	}
 	
-	Random randomGenerator = new Random();
-	
 	public void run() {
-		System.out.println("릴리즈하였습니다.");
-//		CTItem item = new CTItem("aabbcc");
-//		int x = randomGenerator.nextInt(190)+10;
-//		int y = randomGenerator.nextInt(190)+10;
-//		
-//		item.setLocation(new Point(x,y));
-//		int w = randomGenerator.nextInt(100)+10;
-//		int h = randomGenerator.nextInt(100)+10;
-//		item.setDimension(new Dimension(w,h));
-//		selected.setAllowFiringModelUpdate(true);
-//		selected.addChild(item);
-//		selected.getRoot().arrangeChildSizeLocations();
-//		viewer.refresh();
+		try {
+			JobStatus js = item.getJobStatus();
+			JobIdentifier jobIdentifier = new JobIdentifier(js.getResourceId(), js.getJobId());
+			socketHandler.send(Packet.createReqPacket(MessageId.REQ_RELEASE, jobIdentifier));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

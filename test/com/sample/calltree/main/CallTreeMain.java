@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.jface.action.Action;
@@ -28,14 +27,13 @@ import com.sample.calltree.ctrl.CtrlFactory;
 import com.sample.calltree.main.action.ConfirmAction;
 import com.sample.calltree.main.action.HoldAction;
 import com.sample.calltree.main.action.ReleaseAction;
-import com.sample.calltree.model.CTContainer;
-import com.sample.calltree.model.CTContainer.ChildItemSelectOptions;
-import com.sample.calltree.model.CTElement;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.JobStatus;
+import com.sample.calltree.packet.enums.JobStatusType;
 import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.enums.ReturnCode;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
@@ -49,6 +47,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	private CallTreeCanvas canvas ;
 	private CTRoot ctRoot;
 	private SocketHandler socketHandler;
+	
+	private JobList jobList;
 	
 	public CallTreeMain() {
 		super(null);
@@ -119,35 +119,35 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		}
 	}
 
-	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
-		if ( randomPos == 0 ) return cont;
-		
-		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
-			curPos ++;
-			if ( randomPos == curPos ) return ele;
-			if ( ele instanceof CTContainer ) {
-				CTContainer ctc = (CTContainer)ele;
-				CTElement ele2 = getItem(ctc, randomPos, curPos);
-				if ( ele2 != null ) {
-					return ele2;
-				} else {
-					curPos += getItemCnt(ctc);
-				}
-			}
-		} 
-		return null;
-	}
-
-	private int getItemCnt(CTContainer cont) {
-		int cnt = cont.getChildItems(ChildItemSelectOptions.All).size();
-		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
-			if ( ele instanceof CTContainer ) {
-				CTContainer ctc = (CTContainer)ele;
-				cnt += getItemCnt(ctc);
-			}
-		} 
-		return cnt;
-	}
+//	private CTElement getItem(CTContainer cont, int randomPos, int curPos) {
+//		if ( randomPos == 0 ) return cont;
+//		
+//		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
+//			curPos ++;
+//			if ( randomPos == curPos ) return ele;
+//			if ( ele instanceof CTContainer ) {
+//				CTContainer ctc = (CTContainer)ele;
+//				CTElement ele2 = getItem(ctc, randomPos, curPos);
+//				if ( ele2 != null ) {
+//					return ele2;
+//				} else {
+//					curPos += getItemCnt(ctc);
+//				}
+//			}
+//		} 
+//		return null;
+//	}
+//
+//	private int getItemCnt(CTContainer cont) {
+//		int cnt = cont.getChildItems(ChildItemSelectOptions.All).size();
+//		for ( CTElement ele : cont.getChildItems(ChildItemSelectOptions.All) ) {
+//			if ( ele instanceof CTContainer ) {
+//				CTContainer ctc = (CTContainer)ele;
+//				cnt += getItemCnt(ctc);
+//			}
+//		} 
+//		return cnt;
+//	}
 
 	private void createContextMenu(final CallTreeViewer tv) {
 		MenuManager menuMgr = new MenuManager();
@@ -162,35 +162,35 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	    tv.getControl().setMenu(menu);
 	}
 
-	private static CTRoot createDummyCTRoot() {
-		CTRoot root = new CTRoot("root");
-		root.setBackgroundColor(ColorConstants.orange);
-		
-		CTItem ctItem1 = new CTItem("item1");
-		ctItem1.setLocation(new Point(100,100));
-		ctItem1.setBackgroundColor(ColorConstants.green);
-		ctItem1.setDimension(new Dimension(70, 130));
-		root.addChild(ctItem1);
-		
-		CTItem ctItem2 = new CTItem("item2");
-		ctItem2.setLocation(new Point(20,70));
-		ctItem2.setBackgroundColor(ColorConstants.darkGray);
-		ctItem2.setDimension(new Dimension(70, 40));
-		root.addChild(ctItem2);
-		
-		CTItem ctItem3 = new CTItem("item3");
-		ctItem3.setLocation(new Point(50,20));
-		ctItem3.setBackgroundColor(ColorConstants.darkGreen);
-		ctItem3.setDimension(new Dimension(30, 80));
-		root.addChild(ctItem3);
-		
-//		CTConnection con1 = CTConnection.newInstance("con1");
-//		con1.setSource(ctItem1);
-//		con1.setTarget(ctItem2);
-//		root.addConnection(con1);
-		
-		return root;
-	}
+//	private static CTRoot createDummyCTRoot() {
+//		CTRoot root = new CTRoot("root");
+//		root.setBackgroundColor(ColorConstants.orange);
+//		
+//		CTItem ctItem1 = new CTItem("item1");
+//		ctItem1.setLocation(new Point(100,100));
+//		ctItem1.setBackgroundColor(ColorConstants.green);
+//		ctItem1.setDimension(new Dimension(70, 130));
+//		root.addChild(ctItem1);
+//		
+//		CTItem ctItem2 = new CTItem("item2");
+//		ctItem2.setLocation(new Point(20,70));
+//		ctItem2.setBackgroundColor(ColorConstants.darkGray);
+//		ctItem2.setDimension(new Dimension(70, 40));
+//		root.addChild(ctItem2);
+//		
+//		CTItem ctItem3 = new CTItem("item3");
+//		ctItem3.setLocation(new Point(50,20));
+//		ctItem3.setBackgroundColor(ColorConstants.darkGreen);
+//		ctItem3.setDimension(new Dimension(30, 80));
+//		root.addChild(ctItem3);
+//		
+////		CTConnection con1 = CTConnection.newInstance("con1");
+////		con1.setSource(ctItem1);
+////		con1.setTarget(ctItem2);
+////		root.addConnection(con1);
+//		
+//		return root;
+//	}
 
 	public static void main(String[] args) {
 		CallTreeMain ct = new CallTreeMain();
@@ -206,10 +206,16 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 			CTItem ctItem = (CTItem)ctrl.getElement();
 			
 			if ( ctItem.getOwner() instanceof CTRoot ) {
-				actions.add(new ConfirmAction(ctItem, tv));
+				if ( ctItem.getJobStatusType() == JobStatusType.STOPPED ) {
+					actions.add(new ConfirmAction(socketHandler, ctItem));
+				}
 			} else {
-				actions.add(new HoldAction(ctItem, tv));
-				actions.add(new ReleaseAction(ctItem, tv));
+				if ( ctItem.getJobStatusType() == JobStatusType.STOPPED ) {
+					actions.add(new HoldAction(socketHandler, ctItem));
+				}
+				if ( ctItem.getJobStatusType() == JobStatusType.HOLD ) {
+					actions.add(new ReleaseAction(socketHandler, ctItem));
+				}
 			}
 		}
 		
@@ -232,8 +238,15 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		
 		switch ( receivedPacket.getMessageId() ) {
 		case REQ_JOBLIST :
-			System.out.println("REQ_LOGIN Consuming...");
-			JobList jobList = JobList.createRandom();
+			System.out.println("REQ_JOBLIST Consuming...");
+			jobList = (JobList)receivedPacket.getBody();
+			jobList.initJobsMap();
+			
+			// TODO LOG
+			for ( JobStatus jobStatus : jobList.getJobs() ) {
+				System.out.printf("id:%s, pId:%s\n", jobStatus.getJobId(), jobStatus.getParentJobId());
+			}
+			
 			ctRoot = createItems(jobList);
 			ctRoot.arrangeChildSizeLocations();
 
@@ -246,6 +259,22 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 					ctRoot.setAllowFiringModelUpdate(true);
 					ctRoot.fireModelUpdated();
 					tv.setInput(ctRoot);
+				}
+			});
+			
+			break;
+		case REQ_HOLD :
+		case REQ_RELEASE :
+			JobStatus recvJobStatus = (JobStatus)receivedPacket.getBody();
+			JobIdentifier jobIdentifier = JobIdentifier.newInstance(recvJobStatus);
+			final JobStatus onMemoryJobStatus = jobList.getJobStatus(jobIdentifier);
+			
+			onMemoryJobStatus.setJobStatusType(recvJobStatus.getJobStatusType());
+			// 모델 변경 노티
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					onMemoryJobStatus.fireModelUpdated();
 				}
 			});
 			
@@ -264,9 +293,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 			}
 		}
 		
-		CTItem confirmJobItem = new CTItem(confirmJob.getJobId());
+		CTItem confirmJobItem = new CTItem(confirmJob);
 		confirmJobItem.setLocation(new Point(100,100));
-		confirmJobItem.setBackgroundColor(ColorConstants.green);
 		confirmJobItem.setDimension(new Dimension(70, 130));
 		root.addChild(confirmJobItem);
 		
@@ -278,9 +306,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	private void generateItemTreeByParentJob(JobStatus parentJob, JobList jobList, CTItem parentItem) {
 		for ( JobStatus childJs : jobList.getJobs() ) {
 			if ( parentJob.getJobId().equals(childJs.getParentJobId()) ) {
-				CTItem childJobItem = new CTItem(childJs.getJobId());
+				CTItem childJobItem = new CTItem(childJs);
 				childJobItem.setLocation(new Point(100,100));
-				childJobItem.setBackgroundColor(ColorConstants.green);
 				childJobItem.setDimension(new Dimension(70, 130));
 				parentItem.addChild(childJobItem);
 				

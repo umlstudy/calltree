@@ -23,7 +23,7 @@ public class AddAction extends Action {
 	Random randomGenerator = new Random();
 	
 	public void run() {
-		CTItem item = new CTItem("aabbcc");
+		CTItem item = new CTItem("aabbcc", null);
 		int x = randomGenerator.nextInt(190)+10;
 		int y = randomGenerator.nextInt(190)+10;
 		

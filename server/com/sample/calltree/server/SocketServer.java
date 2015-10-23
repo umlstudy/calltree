@@ -7,14 +7,19 @@ import java.net.Socket;
 import org.apache.commons.io.IOUtils;
 
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
+import com.sample.calltree.packet.body.JobStatus;
 import com.sample.calltree.packet.body.LoginRequest;
+import com.sample.calltree.packet.enums.JobStatusType;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
 import com.sample.calltree.packet.socket.SocketHandler;
 
 public class SocketServer {
 
 	public final static int PORT = 19999;
+	
+	public static JobList jobList = null;
 	
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
@@ -73,20 +78,32 @@ public class SocketServer {
 
 	private static void packetReceived(SocketHandler socketHandler, Packet receivedPacket) throws IOException {
 
+		Packet resPacket = null;
+		
 		switch ( receivedPacket.getMessageId() ) {
 		case REQ_LOGIN :
 			LoginRequest loginRequest = (LoginRequest)receivedPacket.getBody();
 			if ( "test".equals(loginRequest.getLoginId()) && "test".equals(loginRequest.getLoginPassword() ) ) {
-				Packet resPacket = Packet.createResPacket(receivedPacket, null);
+				resPacket = Packet.createResPacket(receivedPacket, null);
 				socketHandler.send(resPacket);
 			} else {
-				Packet resPacket = Packet.errorResPacket(receivedPacket, 011, "로그인 ID 및 암호를 확인하세요.");
+				resPacket = Packet.errorResPacket(receivedPacket, 011, "로그인 ID 및 암호를 확인하세요.");
 				socketHandler.send(resPacket);
 			}
 			break;
 		case REQ_JOBLIST :
-			JobList jobList = JobList.createRandom();
-			Packet resPacket = Packet.createResPacket(receivedPacket, jobList);
+			if ( jobList == null ) {
+				jobList = JobList.createMockupJobsForTest();
+			}
+			resPacket = Packet.createResPacket(receivedPacket, jobList);
+			socketHandler.send(resPacket);
+			break;
+			
+		case REQ_HOLD :
+			JobIdentifier jobIdent = (JobIdentifier)receivedPacket.getBody();
+			JobStatus jobStatus = jobList.getJobStatus(jobIdent);
+			jobStatus.setJobStatusType(JobStatusType.HOLD);
+			resPacket = Packet.createResPacket(receivedPacket, jobStatus);
 			socketHandler.send(resPacket);
 			break;
 		}

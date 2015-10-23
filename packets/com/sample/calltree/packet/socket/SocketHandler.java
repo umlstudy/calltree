@@ -46,6 +46,7 @@ public class SocketHandler implements Closeable, Runnable {
 	public void send(Packet packet) throws IOException {
 		byte[] bytes = packet.getBytes();
 		System.out.println("패킷 전송 시작 : " + packet.getMessageId().toString() );
+		System.out.println("패킷 전송 시작 : " + packet.getResType().toString() );
 		HexDump.dump(bytes, 0, System.out, 0);
 		outputStream.write(bytes);
 		outputStream.flush();
