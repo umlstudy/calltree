@@ -32,8 +32,8 @@ import com.sample.calltree.model.CTRoot;
 import com.sample.calltree.packet.Packet;
 import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
-import com.sample.calltree.packet.body.JobStatus;
-import com.sample.calltree.packet.enums.JobStatusType;
+import com.sample.calltree.packet.body.Job;
+import com.sample.calltree.packet.enums.JobStatus;
 import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.enums.ReturnCode;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
@@ -206,14 +206,14 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 			CTItem ctItem = (CTItem)ctrl.getElement();
 			
 			if ( ctItem.getOwner() instanceof CTRoot ) {
-				if ( ctItem.getJobStatusType() == JobStatusType.STOPPED ) {
+				if ( ctItem.getJobStatus() == JobStatus.STOPPED ) {
 					actions.add(new ConfirmAction(socketHandler, ctItem));
 				}
 			} else {
-				if ( ctItem.getJobStatusType() == JobStatusType.STOPPED ) {
+				if ( ctItem.getJobStatus() == JobStatus.STOPPED ) {
 					actions.add(new HoldAction(socketHandler, ctItem));
 				}
-				if ( ctItem.getJobStatusType() == JobStatusType.HOLD ) {
+				if ( ctItem.getJobStatus() == JobStatus.HOLD ) {
 					actions.add(new ReleaseAction(socketHandler, ctItem));
 				}
 			}
@@ -243,8 +243,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 			jobList.initJobsMap();
 			
 			// TODO LOG
-			for ( JobStatus jobStatus : jobList.getJobs() ) {
-				System.out.printf("id:%s, pId:%s\n", jobStatus.getJobId(), jobStatus.getParentJobId());
+			for ( Job job : jobList.getJobs() ) {
+				System.out.printf("id:%s, pId:%s\n", job.getJobId(), job.getParentJobId());
 			}
 			
 			ctRoot = createItems(jobList);
@@ -265,16 +265,16 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 			break;
 		case REQ_HOLD :
 		case REQ_RELEASE :
-			JobStatus recvJobStatus = (JobStatus)receivedPacket.getBody();
-			JobIdentifier jobIdentifier = JobIdentifier.newInstance(recvJobStatus);
-			final JobStatus onMemoryJobStatus = jobList.getJobStatus(jobIdentifier);
+			Job recvJob = (Job)receivedPacket.getBody();
+			JobIdentifier jobIdentifier = JobIdentifier.newInstance(recvJob);
+			final Job onMemoryJob = jobList.getJob(jobIdentifier);
 			
-			onMemoryJobStatus.setJobStatusType(recvJobStatus.getJobStatusType());
+			onMemoryJob.setJobStatus(recvJob.getJobStatus());
 			// 모델 변경 노티
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					onMemoryJobStatus.fireModelUpdated();
+					onMemoryJob.fireModelUpdated();
 				}
 			});
 			
@@ -285,8 +285,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	private CTRoot createItems(JobList jobList) {
 		CTRoot root = new CTRoot("root");
 		
-		JobStatus confirmJob = null;
-		for ( JobStatus js : jobList.getJobs() ) {
+		Job confirmJob = null;
+		for ( Job js : jobList.getJobs() ) {
 			if ( js.getParentJobId() == null ) {
 				confirmJob = js;
 				break;
@@ -303,8 +303,8 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		return root;
 	}
 
-	private void generateItemTreeByParentJob(JobStatus parentJob, JobList jobList, CTItem parentItem) {
-		for ( JobStatus childJs : jobList.getJobs() ) {
+	private void generateItemTreeByParentJob(Job parentJob, JobList jobList, CTItem parentItem) {
+		for ( Job childJs : jobList.getJobs() ) {
 			if ( parentJob.getJobId().equals(childJs.getParentJobId()) ) {
 				CTItem childJobItem = new CTItem(childJs);
 				childJobItem.setLocation(new Point(100,100));

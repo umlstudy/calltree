@@ -7,7 +7,7 @@ import org.eclipse.jface.action.Action;
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.packet.Packet;
 import com.sample.calltree.packet.body.JobIdentifier;
-import com.sample.calltree.packet.body.JobStatus;
+import com.sample.calltree.packet.body.Job;
 import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.socket.SocketHandler;
 
@@ -24,8 +24,8 @@ public class ConfirmAction extends Action {
 	
 	public void run() {
 		try {
-			JobStatus js = item.getJobStatus();
-			JobIdentifier jobIdentifier = new JobIdentifier(js.getResourceId(), js.getJobId());
+			Job job = item.getJob();
+			JobIdentifier jobIdentifier = new JobIdentifier(job.getResourceId(), job.getJobId());
 			socketHandler.send(Packet.createReqPacket(MessageId.REQ_CONFIRM, jobIdentifier));
 		} catch (IOException e) {
 			throw new RuntimeException(e);

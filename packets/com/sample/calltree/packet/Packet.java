@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.sample.calltree.packet.body.Error;
 import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
-import com.sample.calltree.packet.body.JobStatus;
+import com.sample.calltree.packet.body.Job;
 import com.sample.calltree.packet.body.LoginRequest;
 import com.sample.calltree.packet.enums.ConnectorType;
 import com.sample.calltree.packet.enums.MessageId;
@@ -31,14 +31,22 @@ public class Packet {
 	private Packet() {
 	}
 	
-	public static Packet createReqPacket(MessageId messageId, BodyPacketBase body) {
+	private static Packet createPacket(ResType resType, MessageId messageId, ReturnCode rc, BodyPacketBase body) {
 		Packet packet = new Packet();
-		packet.setResType(ResType.REQ);
+		packet.setResType(resType);
 		packet.setMessageId(messageId);
-		packet.setReturnCode(ReturnCode.SUCCESS);
+		packet.setReturnCode(rc);
 		packet.setBody(body);
 		
 		return packet;
+	}
+	
+	public static Packet createReqPacket(MessageId messageId, BodyPacketBase body) {
+		return createPacket(ResType.REQ, messageId, ReturnCode.SUCCESS, body);
+	}
+	
+	public static Packet createPushPacket(MessageId messageId, BodyPacketBase body) {
+		return createPacket(ResType.PUSH, messageId, ReturnCode.SUCCESS, body);
 	}
 
 	public static Packet errorResPacket(Packet reqPacket, int errorCode, String errorMsg) {
@@ -50,15 +58,8 @@ public class Packet {
 	}
 	
 	public static Packet createResPacket(Packet reqPacket, BodyPacketBase body, ReturnCode rc) {
-		Packet resPacket = new Packet();
-		resPacket.setResType(ResType.RES);
-		resPacket.setMessageId(reqPacket.getMessageId());
-		resPacket.setReturnCode(rc);
-		resPacket.setBody(body);
-		
-		return resPacket;
+		return createPacket(ResType.RES, reqPacket.getMessageId(), rc, body);
 	}
-
 	
 	public byte[] getBytes() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -150,7 +151,7 @@ public class Packet {
 					break;
 				case REQ_HOLD :
 				case REQ_RELEASE :
-					body = GSON.fromJson(bodyString, JobStatus.class);
+					body = GSON.fromJson(bodyString, Job.class);
 					break;
 				default :
 					throw new RuntimeException();

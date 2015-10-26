@@ -8,25 +8,25 @@ import java.util.Map;
 import java.util.Random;
 
 import com.sample.calltree.packet.BodyPacketBase;
-import com.sample.calltree.packet.enums.JobStatusType;
+import com.sample.calltree.packet.enums.JobStatus;
 
 public class JobList extends BodyPacketBase {
 	
 	private String resourceId;
-	private List<JobStatus> jobs;
-	private transient Map<String, JobStatus> jobsMap;
+	private List<Job> jobs;
+	private transient Map<String, Job> jobsMap;
 	
-	public JobList(String resourceId, List<JobStatus> jobs) {
+	public JobList(String resourceId, List<Job> jobs) {
 		setResourceId(resourceId);
 		setJobs(jobs);
 	}
 	
 	public void initJobsMap() {
 		if ( jobsMap == null ) {
-			jobsMap = new HashMap<String, JobStatus>();
+			jobsMap = new HashMap<String, Job>();
 		}
 		if ( getJobs() != null ) {
-			for ( JobStatus js : getJobs() ) {
+			for ( Job js : getJobs() ) {
 				jobsMap.put(js.getJobId(), js);
 			}
 		}
@@ -40,15 +40,15 @@ public class JobList extends BodyPacketBase {
 		this.resourceId = resourceId;
 	}
 	
-	public JobStatus getJobStatus(JobIdentifier jobIdentifier) {
+	public Job getJob(JobIdentifier jobIdentifier) {
 		return jobsMap.get(jobIdentifier.getJobId());
 	}
 
-	public List<JobStatus> getJobs() {
+	public List<Job> getJobs() {
 		return Collections.unmodifiableList(jobs);
 	}
 
-	public void setJobs(List<JobStatus> jobs) {
+	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
 		
 		initJobsMap();
@@ -57,33 +57,33 @@ public class JobList extends BodyPacketBase {
 
 	public static JobList createMockupJobsForTest() {
 		
-		Map<String, JobStatus> mapJobs = new HashMap<String, JobStatus>();
+		Map<String, Job> mapJobs = new HashMap<String, Job>();
 		for ( int i=0; i<10; i++ ) {
-			JobStatus js = createJobStatus(mapJobs);
-			mapJobs.put(js.getJobId(), js);
+			Job job = createJob(mapJobs);
+			mapJobs.put(job.getJobId(), job);
 		}
 		
 		// TODO LOG
 		for ( String jobId : mapJobs.keySet() ) {
-			JobStatus jobStatus = mapJobs.get(jobId);
-			System.out.printf("id:%s, pId:%s\n", jobId, jobStatus.getParentJobId());
+			Job job = mapJobs.get(jobId);
+			System.out.printf("id:%s, pId:%s\n", jobId, job.getParentJobId());
 		}
 
-		List<JobStatus> jobs = new ArrayList<JobStatus>();
+		List<Job> jobs = new ArrayList<Job>();
 		jobs.addAll(mapJobs.values());
 		Random r = new Random();
 		int intval = r.nextInt();
 		return new JobList(Integer.toString(intval), jobs);
 	}
 
-	private static JobStatus createJobStatus(Map<String, JobStatus> jobs) {
+	private static Job createJob(Map<String, Job> jobs) {
 		Random r = new Random();
 		int intval = r.nextInt(15000);
 		while ( jobs.containsKey(Integer.toString(intval)) ) {
 			intval = r.nextInt(15000);
 		}
 		String jobId = Integer.toString(intval);
-		JobStatus jobStatus = new JobStatus(jobId, null, JobStatusType.STOPPED);
+		Job job = new Job(jobId, null, JobStatus.STOPPED);
 		if ( jobs.size() > 0 ) {
 			String[] keys = jobs.keySet().toArray(new String[0]);
 			int pos = r.nextInt(jobs.size());
@@ -91,8 +91,8 @@ public class JobList extends BodyPacketBase {
 			if ( parentJobId == null ) {
 				throw new RuntimeException();
 			}
-			jobStatus.setParentJobId(parentJobId);
+			job.setParentJobId(parentJobId);
 		}
-		return jobStatus;
+		return job;
 	}
 }

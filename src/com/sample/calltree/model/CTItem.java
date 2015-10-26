@@ -7,29 +7,29 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
 
-import com.sample.calltree.packet.body.JobStatus;
-import com.sample.calltree.packet.enums.JobStatusType;
+import com.sample.calltree.packet.body.Job;
+import com.sample.calltree.packet.enums.JobStatus;
 
 public class CTItem extends CTContainer implements CTLocationElement, CTConnectionEndPoint {
 
 	private Point location;
 	private Dimension dimension;
 
-	private JobStatus jobStatus;
+	private Job job;
 	
 	private Color defaultBackgroundColor;
 	private Color mouseOverBackgroundColor;
 	
 	private boolean isVisible;
 	
-	public CTItem(String name, JobStatus jobStatus) {
+	public CTItem(String name, Job job) {
 		super(name);
 		setVisible(true);
-		setJobStatus(jobStatus);
+		setJob(job);
 	}
 	
-	public CTItem(JobStatus jobStatus) {
-		this(jobStatus.getJobId(), jobStatus);
+	public CTItem(Job job) {
+		this(job.getJobId(), job);
 	}
 
 	@Override
@@ -83,27 +83,27 @@ public class CTItem extends CTContainer implements CTLocationElement, CTConnecti
 		this.isVisible = isVisible;
 	}
 
-	public JobStatusType getJobStatusType() {
-		return getJobStatus().getJobStatusType();
-	}
-
 	public JobStatus getJobStatus() {
-		return jobStatus;
+		return getJob().getJobStatus();
 	}
 
-	public void setJobStatus(JobStatus jobStatus) {
-		if ( jobStatus == null ) {
+	public Job getJob() {
+		return job;
+	}
+
+	public void setJob(Job job) {
+		if ( job == null ) {
 			return;
 		}
 		
-		this.jobStatus = jobStatus;
-		jobStatus.setCtItem(this);
+		this.job = job;
+		job.setCtItem(this);
 		
 		changeBackground();
 	}
 
 	public void changeBackground() {
-		switch( jobStatus.getJobStatusType() ) {
+		switch( job.getJobStatus() ) {
 		case HOLD : 
 			setBackgroundColor(ColorConstants.yellow);
 			break;

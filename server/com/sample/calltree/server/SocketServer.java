@@ -7,11 +7,11 @@ import java.net.Socket;
 import org.apache.commons.io.IOUtils;
 
 import com.sample.calltree.packet.Packet;
+import com.sample.calltree.packet.body.Job;
 import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
-import com.sample.calltree.packet.body.JobStatus;
 import com.sample.calltree.packet.body.LoginRequest;
-import com.sample.calltree.packet.enums.JobStatusType;
+import com.sample.calltree.packet.enums.JobStatus;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
 import com.sample.calltree.packet.socket.SocketHandler;
 
@@ -79,6 +79,8 @@ public class SocketServer {
 	private static void packetReceived(SocketHandler socketHandler, Packet receivedPacket) throws IOException {
 
 		Packet resPacket = null;
+		JobIdentifier jobIdent = null;
+		Job jobStatus = null;
 		
 		switch ( receivedPacket.getMessageId() ) {
 		case REQ_LOGIN :
@@ -100,12 +102,33 @@ public class SocketServer {
 			break;
 			
 		case REQ_HOLD :
-			JobIdentifier jobIdent = (JobIdentifier)receivedPacket.getBody();
-			JobStatus jobStatus = jobList.getJobStatus(jobIdent);
-			jobStatus.setJobStatusType(JobStatusType.HOLD);
+			jobIdent = (JobIdentifier)receivedPacket.getBody();
+			jobStatus = jobList.getJob(jobIdent);
+			jobStatus.setJobStatus(JobStatus.HOLD);
 			resPacket = Packet.createResPacket(receivedPacket, jobStatus);
 			socketHandler.send(resPacket);
 			break;
+			
+		case REQ_CONFIRM :
+			jobIdent = (JobIdentifier)receivedPacket.getBody();
+			// 1. 먼저 응답 패킷 전송
+			resPacket = Packet.createResPacket(receivedPacket, null);
+			socketHandler.send(resPacket);
+			
+			startJob(socketHandler, jobIdent);
+			// 
 		}
+	}
+
+	private static void startJob(SocketHandler socketHandler, JobIdentifier jobIdent) {
+		Job job = jobList.getJob(jobIdent);
+		
+		if ( job.getJobStatus() != JobStatus.HOLD ) {
+			job.setJobStatus(JobStatus.RUNNING);
+			//Packet.createPushPacket(MessageId.PUSH_JOBSTATUS, body);
+		}
+		job.setJobStatus(JobStatus.HOLD);
+		// TODO Auto-generated method stub
+	
 	}
 }

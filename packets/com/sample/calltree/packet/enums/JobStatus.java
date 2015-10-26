@@ -1,13 +1,13 @@
 package com.sample.calltree.packet.enums;
 
-public enum JobStatusType {
+public enum JobStatus {
 	RUNNING(10),
 	HOLD(10),
 	STOPPED(20);
 	
 	private int typeValue;
 	
-	private JobStatusType(int value) {
+	private JobStatus(int value) {
 		this.setTypeValue(value);
 	}
 
@@ -19,8 +19,8 @@ public enum JobStatusType {
 		this.typeValue = typeValue;
 	}
 	
-	public static JobStatusType fromTypeValue(int typeValue) {
-		for ( JobStatusType type : JobStatusType.values() ) {
+	public static JobStatus fromTypeValue(int typeValue) {
+		for ( JobStatus type : JobStatus.values() ) {
 			if ( type.getTypeValue() == typeValue ) {
 				return type;
 			}

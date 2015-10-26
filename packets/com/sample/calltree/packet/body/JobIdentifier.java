@@ -12,8 +12,8 @@ public class JobIdentifier extends BodyPacketBase {
 		this.setJobId(jobId);
 	}
 	
-	public static JobIdentifier newInstance(JobStatus jobStatus) {
-		return new JobIdentifier(jobStatus.getResourceId(), jobStatus.getJobId());
+	public static JobIdentifier newInstance(Job job) {
+		return new JobIdentifier(job.getResourceId(), job.getJobId());
 	}
 
 	public String getResourceId() {

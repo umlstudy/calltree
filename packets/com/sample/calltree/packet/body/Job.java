@@ -2,27 +2,27 @@ package com.sample.calltree.packet.body;
 
 import com.sample.calltree.model.CTItem;
 import com.sample.calltree.packet.BodyPacketBase;
-import com.sample.calltree.packet.enums.JobStatusType;
+import com.sample.calltree.packet.enums.JobStatus;
 
-public class JobStatus extends BodyPacketBase {
+public class Job extends BodyPacketBase {
 	
 	private String resourceId;
 	private String jobId;
 	private String parentJobId;
-	private JobStatusType jobStatusType;
+	private JobStatus jobStatus;
 	private transient CTItem ctItem;
 	
-	public JobStatus(String resourceId, String jobId, String parentJobId, JobStatusType jobStatusType) {
+	public Job(String resourceId, String jobId, String parentJobId, JobStatus jobStatus) {
 		setResourceId(resourceId);
 		setJobId(jobId);
 		setParentJobId(parentJobId);
-		setJobStatusType(jobStatusType);
+		setJobStatus(jobStatus);
 	}
 	
-	public JobStatus(String jobId, String parentJobId, JobStatusType jobStatusType) {
+	public Job(String jobId, String parentJobId, JobStatus jobStatus) {
 		setJobId(jobId);
 		setParentJobId(parentJobId);
-		setJobStatusType(jobStatusType);
+		setJobStatus(jobStatus);
 	}
 
 	public String getResourceId() {
@@ -49,12 +49,12 @@ public class JobStatus extends BodyPacketBase {
 		this.parentJobId = parentJobId;
 	}
 
-	public JobStatusType getJobStatusType() {
-		return jobStatusType;
+	public JobStatus getJobStatus() {
+		return jobStatus;
 	}
 
-	public void setJobStatusType(JobStatusType jobStatusType) {
-		this.jobStatusType = jobStatusType;
+	public void setJobStatus(JobStatus jobStatus) {
+		this.jobStatus = jobStatus;
 		
 		if ( getCtItem() != null ) {
 			getCtItem().changeBackground();
