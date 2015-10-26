@@ -24,6 +24,10 @@ public class Job extends BodyPacketBase {
 		setParentJobId(parentJobId);
 		setJobStatus(jobStatus);
 	}
+	
+	public JobIdentifier createJobIdentifier() {
+		return new JobIdentifier(getResourceId(), getJobId());
+	}
 
 	public String getResourceId() {
 		return resourceId;

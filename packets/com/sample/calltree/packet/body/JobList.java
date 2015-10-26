@@ -95,4 +95,14 @@ public class JobList extends BodyPacketBase {
 		}
 		return job;
 	}
+
+	public List<Job> getChildJobs(String parentJobId) {
+		List<Job> childJobs = new ArrayList<Job>();
+		for ( Job childJob : jobs ) {
+			if ( parentJobId.equals(childJob.getParentJobId()) ) {
+				childJobs.add(childJob);
+			}
+		}
+		return childJobs;
+	}
 }

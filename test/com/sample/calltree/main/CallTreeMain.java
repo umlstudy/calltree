@@ -33,6 +33,7 @@ import com.sample.calltree.packet.Packet;
 import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.Job;
+import com.sample.calltree.packet.body.Resource;
 import com.sample.calltree.packet.enums.JobStatus;
 import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.enums.ReturnCode;
@@ -266,20 +267,28 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 		case REQ_HOLD :
 		case REQ_RELEASE :
 			Job recvJob = (Job)receivedPacket.getBody();
-			JobIdentifier jobIdentifier = JobIdentifier.newInstance(recvJob);
-			final Job onMemoryJob = jobList.getJob(jobIdentifier);
-			
-			onMemoryJob.setJobStatus(recvJob.getJobStatus());
-			// 모델 변경 노티
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					onMemoryJob.fireModelUpdated();
-				}
-			});
-			
+			chageJobStatus(recvJob);
+			break;
+		case PUSH_JOBSTATUS :
+			Resource res = (Resource)receivedPacket.getBody();
+			for ( Job job : res.getJobs() ) {
+				chageJobStatus(job);
+			}
 			break;
 		}
+	}
+
+	private void chageJobStatus(Job job) {
+		final Job onMemoryJob = jobList.getJob(job.createJobIdentifier());
+		
+		onMemoryJob.setJobStatus(job.getJobStatus());
+		// 모델 변경 노티
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				onMemoryJob.fireModelUpdated();
+			}
+		});
 	}
 
 	private CTRoot createItems(JobList jobList) {
@@ -304,15 +313,14 @@ public class CallTreeMain extends ApplicationWindow implements PopupActionProvid
 	}
 
 	private void generateItemTreeByParentJob(Job parentJob, JobList jobList, CTItem parentItem) {
-		for ( Job childJs : jobList.getJobs() ) {
-			if ( parentJob.getJobId().equals(childJs.getParentJobId()) ) {
-				CTItem childJobItem = new CTItem(childJs);
-				childJobItem.setLocation(new Point(100,100));
-				childJobItem.setDimension(new Dimension(70, 130));
-				parentItem.addChild(childJobItem);
-				
-				generateItemTreeByParentJob(childJs, jobList, childJobItem);
-			}
+		List<Job> childJobs = jobList.getChildJobs(parentJob.getJobId());
+		for ( Job childJob : childJobs ) {
+			CTItem childJobItem = new CTItem(childJob);
+			childJobItem.setLocation(new Point(100,100));
+			childJobItem.setDimension(new Dimension(70, 130));
+			parentItem.addChild(childJobItem);
+			
+			generateItemTreeByParentJob(childJob, jobList, childJobItem);
 		}
 	}
 

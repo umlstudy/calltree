@@ -3,6 +3,7 @@ package com.sample.calltree.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
@@ -11,7 +12,9 @@ import com.sample.calltree.packet.body.Job;
 import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.LoginRequest;
+import com.sample.calltree.packet.body.Resource;
 import com.sample.calltree.packet.enums.JobStatus;
+import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.socket.ReceviedPacketHandler;
 import com.sample.calltree.packet.socket.SocketHandler;
 
@@ -120,15 +123,23 @@ public class SocketServer {
 		}
 	}
 
-	private static void startJob(SocketHandler socketHandler, JobIdentifier jobIdent) {
+	private static void startJob(SocketHandler socketHandler, JobIdentifier jobIdent) throws IOException {
 		Job job = jobList.getJob(jobIdent);
 		
 		if ( job.getJobStatus() != JobStatus.HOLD ) {
 			job.setJobStatus(JobStatus.RUNNING);
-			//Packet.createPushPacket(MessageId.PUSH_JOBSTATUS, body);
+			Packet packet = Packet.createPushPacket(MessageId.PUSH_JOBSTATUS, Resource.newInstance(job.getResourceId(), job));
+			try {
+				Thread.sleep(500);
+			} catch ( Exception e ) {
+				
+			}
+			socketHandler.send(packet);
+			
+			List<Job> childJobs = jobList.getChildJobs(jobIdent.getJobId());
+			for ( Job childJob : childJobs ) {
+				startJob(socketHandler, childJob.createJobIdentifier());
+			}
 		}
-		job.setJobStatus(JobStatus.HOLD);
-		// TODO Auto-generated method stub
-	
 	}
 }

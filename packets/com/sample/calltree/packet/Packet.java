@@ -12,6 +12,7 @@ import com.sample.calltree.packet.body.JobIdentifier;
 import com.sample.calltree.packet.body.JobList;
 import com.sample.calltree.packet.body.Job;
 import com.sample.calltree.packet.body.LoginRequest;
+import com.sample.calltree.packet.body.Resource;
 import com.sample.calltree.packet.enums.ConnectorType;
 import com.sample.calltree.packet.enums.MessageId;
 import com.sample.calltree.packet.enums.ResType;
@@ -152,6 +153,14 @@ public class Packet {
 				case REQ_HOLD :
 				case REQ_RELEASE :
 					body = GSON.fromJson(bodyString, Job.class);
+					break;
+				default :
+					throw new RuntimeException();
+				}
+			} else if ( packet.getResType() == ResType.PUSH ) {
+				switch ( packet.getMessageId() ) {
+				case PUSH_JOBSTATUS :
+					body = GSON.fromJson(bodyString, Resource.class);
 					break;
 				default :
 					throw new RuntimeException();
