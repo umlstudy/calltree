@@ -17,8 +17,8 @@ eclipse {
 }
 
 repositories {
-	maven { url 'http://mac.sejong.asia:9090/content/groups/public/' }
-	maven { url 'https://swt-repo.googlecode.com/svn/repo/' }
+	maven { url 'http://mac.sejong.asia/nexus/content/groups/public/' }
+	//maven { url 'http://maven-eclipse.github.io/maven/' }
 	mavenLocal()
 	mavenCentral()
 }

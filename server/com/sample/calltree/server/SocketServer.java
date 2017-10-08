@@ -20,7 +20,7 @@ import com.sample.calltree.packet.socket.SocketHandler;
 
 public class SocketServer {
 
-	public final static int PORT = 19999;
+	public final static int PORT = 19991;
 	
 	public static JobList jobList = null;
 	
